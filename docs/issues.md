@@ -29,7 +29,7 @@
 | M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待开发 | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 |
 | M0-005 | CI 轻体词表扫描脚本 | P1 | 待开发 | scripts/check-compliance.sh 扫 miniprogram/**/*.{wxml,js} 命中 "减脂/减肥/瘦/燃脂/塑形" 退出码非 0 |
 | M0-006 | CI 密钥扫描 | P1 | 待开发 | scripts/check-secrets.sh 扫 .env* 与已 commit 文件中的明文 token/secret 模式 |
-| M0-007 | Git 远程推通 | P0 | 待开发 | 推到 Chester 提供的 GitHub 私有仓库 main 分支 |
+| M0-007 | Git 远程推通 | P0 | 已关闭 | 推到 Chester 提供的 GitHub 私有仓库 main 分支 — **PM 在骨架阶段完成（commit `50f34c0`，2026-06-28，远程 `ssh://git@github.com/shz910411/Mysmie-.git`）** |
 
 **M0 完成判据**：以上 7 条全部 QA 通过；空骨架能跑；DB 11 表存在；小程序空壳能预览；推到远程。
 
