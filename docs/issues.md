@@ -25,7 +25,7 @@
 |---|---|---|---|---|
 | M0-001 | 后端 NestJS 空骨架 | P0 | 已关闭 | `npm run start:dev` 启动；GET /health 返回 200；TypeScript 编译无 error — **Dev 已完成** commit `065f87e` 分支 `feature/m0-server/M0-001`；QA 步骤：`cd server && npm install && npm run start:dev` → 另开窗 `curl -i http://localhost:3000/health` 期望 `HTTP 200` + `{"status":"ok"}`；`npm run build` 退 0 — **✅ QA 通过见下方验收证据，tag `v0.0.1`** |
 | M0-002 | PostgreSQL 表迁移脚本 | P0 | 待 QA | 按 [02-技术架构.md 第三节](./02-技术架构.md) 表全部创建；外键/索引/约束（含 data_shares 活跃唯一约束）正确；`npm run migrate` 幂等。**环境已备**（PM 2026-06-28）：本机 PostgreSQL 16 在跑，目标库=干净空库 `maisimei`（旧项目库已归档为 `maisimei_old`，**勿连**）；`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`（本地 trust 认证无密码）。**注意**：02 文档表清单含 notifications/onboarding_tasks/shipments/media_download_logs/export_jobs，实际 >11 张，**以 02 文档为准全建，标题"11"是旧估值勿当上限** — **Dev 已完成** commit `122b21c` 分支 `feature/m0-rest`，验收证据见下方「Dev 自验·M0-002」 |
-| M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待开发 | 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 |
+| M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待 QA（待 devtools 真编译）| 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 — **Dev 已完成代码** commit `1cdaeac` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-003」。⚠️ **Dev 环境无法真编译，必须 QA/人工用微信开发者工具导入 `miniprogram/` 真编译确认 4 tab 可点、空白页可预览后才能关闭** |
 | M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待开发 | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 |
 | M0-005 | CI 轻体词表扫描脚本 | P1 | 待开发 | scripts/check-compliance.sh 扫 miniprogram/**/*.{wxml,js} 命中 "减脂/减肥/瘦/燃脂/塑形" 退出码非 0 |
 | M0-006 | CI 密钥扫描 | P1 | 待开发 | scripts/check-secrets.sh 扫 .env* 与已 commit 文件中的明文 token/secret 模式 |
@@ -120,6 +120,24 @@
 7. `media_download_logs` 把 02 文档「file_keys/date_range」拆为 `file_keys JSONB` + `date_range JSONB` 两列。
 
 迁移工具：纯 SQL + `ts-node` 运行器，`_migrations` 账本表跳过已应用文件——**M0 不引入 TypeORM 实体**（符合指引②）。`.env`（含 DATABASE_URL/JWT_SECRET）本地创建且已被 `.gitignore` 拦截，未进 Git。
+
+---
+
+### Dev 自验 · M0-003（2026-06-28 夜，Dev 窗，commit `1cdaeac`）
+
+⚠️ **真编译归属**：按指引⑥，Dev 环境无微信开发者工具，**无法真编译**。下表自验仅覆盖「代码就绪度」（JSON 合法 / 目录齐全 / tab 配置一致 / 文案合规），**编译可预览这一项必须 QA/人工在微信开发者工具内确认**，Dev 不声称已编译通过。
+
+| 项 | 方法 | 结果 |
+|---|---|---|
+| A JSON 合法 | node `JSON.parse` 遍历 7 个 .json（app/4×page/project.config/sitemap）| 全部 OK |
+| B 页面完整 | app.json `pages[]` 每页校验 .js/.json/.wxml | 4 页 × 3 文件全在 |
+| C tabBar 一致 | tab 数 + 每个 pagePath ∈ pages | 4 tab；称重/打卡/汇总/我的 均 ✓ 在 pages |
+| D 文案合规 | `grep -E '减脂\|减肥\|瘦\|燃脂\|塑形' miniprogram/` | 0 命中 ✓ |
+| E wxml 风险 | 人工核 wxml | 纯静态 view/text，无 wx:for/wx:if（避开编译盲区）|
+
+**QA 待补**（Dev 做不了，必须人工）：微信开发者工具导入 `miniprogram/` → 真编译 0 error → 4 tab 可点切换 → 各 tab 空白占位页正常渲染。
+
+**Dev 假设**：① `appid` 暂置 `touristappid`（真 appid 是外部依赖 #2 行政办，QA/人工真编译时可在工具内换成测试号或真号）；② tabBar 用纯文字、无 icon PNG（占位阶段免造图标二进制；M0-003 成功标准只要「4 tab 占位」未要求图标）；③ `project.config.json` 放在 `miniprogram/` 内、`libVersion` 置 `3.5.0`。
 
 ---
 
