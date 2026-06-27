@@ -28,7 +28,7 @@
 | M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待 QA（待 devtools 真编译）| 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 — **Dev 已完成代码** commit `1cdaeac` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-003」。⚠️ **Dev 环境无法真编译，必须 QA/人工用微信开发者工具导入 `miniprogram/` 真编译确认 4 tab 可点、空白页可预览后才能关闭** |
 | M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待 QA | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 — **Dev 已完成** commit `7d165e1` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-004」 |
 | M0-005 | CI 轻体词表扫描脚本 | P1 | 待 QA | scripts/check-compliance.sh 扫 miniprogram/**/*.{wxml,js} 命中 "减脂/减肥/瘦/燃脂/塑形" 退出码非 0 — **Dev 已完成** commit `32a5d3d` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-005」 |
-| M0-006 | CI 密钥扫描 | P1 | 待开发 | scripts/check-secrets.sh 扫 .env* 与已 commit 文件中的明文 token/secret 模式 |
+| M0-006 | CI 密钥扫描 | P1 | 待 QA | scripts/check-secrets.sh 扫 .env* 与已 commit 文件中的明文 token/secret 模式 — **Dev 已完成** commit `5c52c73` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-006」 |
 | M0-007 | Git 远程推通 | P0 | 已关闭 | 推到 Chester 提供的 GitHub 私有仓库 main 分支 — **PM 在骨架阶段完成（commit `50f34c0`，2026-06-28，远程 `ssh://git@github.com/shz910411/Mysmie-.git`）** |
 
 **M0 完成判据**：以上 7 条全部 QA 通过；空骨架能跑；DB 全表存在；小程序空壳能预览；推到远程。
@@ -167,6 +167,25 @@
 | C 清除后 | 删临时文件再跑 | 恢复 **退出码 0** ✓ |
 
 **Dev 假设**：① 词表取成功标准所列核心 5 词；CLAUDE.md 第五节提到的「极限词/医疗暗示词」未逐一入表（避免误报，留 PM 后续扩词）；② 扫描范围在成功标准要求的 `.wxml/.js` 基础上**附带 `.json`**（tabBar/导航标题等用户可见文案在 json），属低风险硬化；如 PM 要求严格按 spec 仅扫两类，删 `--include='*.json'` 即可。
+
+---
+
+### Dev 自验 · M0-006（2026-06-28 夜，Dev 窗，commit `5c52c73`）
+
+实现：`scripts/check-secrets.sh` 三检——①`.env` 家族禁入库（仅许 `.env.example`）②已跟踪文件扫强模式（私钥块/`AKIA`/`LTAI`/`sk-`/`gh*_`）+ 通用密钥赋值（排占位词+lock 文件）③磁盘 `.env*`（含本地 gitignored）仅扫真实云密钥强模式。
+
+| 项 | 操作（合成测试串，非真实凭证）| 结果 |
+|---|---|---|
+| A 干净树 | 直接跑（本地 `server/.env` 含 dev 占位密钥）| `✓ 无泄漏`，**退 0**（占位不误报）✓ |
+| B 本地 .env* 真实云密钥 | 临时 `.env.secrettest` 写阿里云 `LTAI…` 串 | `✗ 含真实密钥强模式`，**退 1** ✓ |
+| C 已跟踪文件 AWS | `git add` 一 .ts 含 `AKIA…` | `✗ 强模式`，**退 1** ✓ |
+| D 已跟踪文件通用密钥 | `git add` 一 .ts 含 `appsecret="…24位…"` | `✗ 疑似明文密钥赋值`，**退 1** ✓ |
+| E .env 家族入库 | `git add -f` 根级临时 `.env` | `✗ .env 家族被跟踪`，**退 1** ✓ |
+| F 回归 | 全部清理后再跑 | **退 0** ✓ |
+
+收尾确认：无 `__sectest*`/`.env.secrettest`/根 `.env` 残留；`server/.env` 完好且仍被 `.gitignore` 忽略。
+
+**Dev 假设**：① 强模式覆盖私钥块 + AWS/阿里云 AK + OpenAI `sk-` + GitHub PAT；通用赋值匹配 `secret/token/password/appsecret/api_key/access_key` 后 ≥16 位值，并用占位白名单（example/your/changeme/dummy/not-a-real/dev-local 等）降误报。② `package-lock.json` 排除出扫描（机器生成的哈希噪声）。③ 本地 `.env*` 只扫强模式、不扫通用赋值——避免对 dev 假密钥误报；如 PM 要更严可去掉该豁免。
 
 ---
 
