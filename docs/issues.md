@@ -24,7 +24,7 @@
 | ID | 标题 | 优先级 | 状态 | 成功标准 |
 |---|---|---|---|---|
 | M0-001 | 后端 NestJS 空骨架 | P0 | 已关闭 | `npm run start:dev` 启动；GET /health 返回 200；TypeScript 编译无 error — **Dev 已完成** commit `065f87e` 分支 `feature/m0-server/M0-001`；QA 步骤：`cd server && npm install && npm run start:dev` → 另开窗 `curl -i http://localhost:3000/health` 期望 `HTTP 200` + `{"status":"ok"}`；`npm run build` 退 0 — **✅ QA 通过见下方验收证据，tag `v0.0.1`** |
-| M0-002 | PostgreSQL 表迁移脚本 | P0 | 待开发 | 按 [02-技术架构.md 第三节](./02-技术架构.md) 表全部创建；外键/索引/约束（含 data_shares 活跃唯一约束）正确；`npm run migrate` 幂等。**环境已备**（PM 2026-06-28）：本机 PostgreSQL 16 在跑，目标库=干净空库 `maisimei`（旧项目库已归档为 `maisimei_old`，**勿连**）；`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`（本地 trust 认证无密码）。**注意**：02 文档表清单含 notifications/onboarding_tasks/shipments/media_download_logs/export_jobs，实际 >11 张，**以 02 文档为准全建，标题"11"是旧估值勿当上限** |
+| M0-002 | PostgreSQL 表迁移脚本 | P0 | 待 QA | 按 [02-技术架构.md 第三节](./02-技术架构.md) 表全部创建；外键/索引/约束（含 data_shares 活跃唯一约束）正确；`npm run migrate` 幂等。**环境已备**（PM 2026-06-28）：本机 PostgreSQL 16 在跑，目标库=干净空库 `maisimei`（旧项目库已归档为 `maisimei_old`，**勿连**）；`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`（本地 trust 认证无密码）。**注意**：02 文档表清单含 notifications/onboarding_tasks/shipments/media_download_logs/export_jobs，实际 >11 张，**以 02 文档为准全建，标题"11"是旧估值勿当上限** — **Dev 已完成** commit `122b21c` 分支 `feature/m0-rest`，验收证据见下方「Dev 自验·M0-002」 |
 | M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待开发 | 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 |
 | M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待开发 | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 |
 | M0-005 | CI 轻体词表扫描脚本 | P1 | 待开发 | scripts/check-compliance.sh 扫 miniprogram/**/*.{wxml,js} 命中 "减脂/减肥/瘦/燃脂/塑形" 退出码非 0 |
@@ -90,6 +90,36 @@
 | G 迈思美三维度 | — | N/A：纯后端骨架无可见界面，待 M0-003 小程序壳再查 |
 
 结论：**5 项硬指标全过 → 已关闭**。真起服务 + 真 curl 真实 200 + 真 tsc build 退 0，无 mock、无 node --check 自检。
+
+---
+
+### Dev 自验 · M0-002（2026-06-28 夜，Dev 窗，commit `122b21c`）
+
+环境：PostgreSQL 16.14（Homebrew，trust 无密码），目标库 `maisimei`（连前确认空库），`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`。
+
+| 项 | 命令 | 结果 |
+|---|---|---|
+| A 首次迁移 | `npm run migrate` | `apply 001_init_schema.sql`，本次应用 1 个 |
+| B 全表建成 | `SELECT … FROM pg_tables`（排除 `_migrations`）| **19 张业务表全部存在**（清单见下） |
+| C 幂等 | `npm run migrate` 第二次 | `skip 001_init_schema.sql`，应用 0 个，退出码 0，表数仍 19 |
+| D data_shares 活跃唯一 | 同 (owner,viewer) 插第二条 active | `ERROR: duplicate key … uq_data_shares_active`（被拒）✓ |
+| D2 revoked 可重复 | 改 revoked 后再插 active | 成功；最终 2 行 1 活跃 ✓（历史 revoked 不挡新活跃）|
+| E whr 生成列 | 腰 80 / 臀 100 → `whr`；臀 NULL → `whr` | `0.80` / `NULL` ✓ |
+| F 外键拦截 | weight_records 指向不存在 user 999999 | `ERROR: violates foreign key constraint`（被拒）✓ |
+| G 收尾 | `TRUNCATE … RESTART IDENTITY CASCADE` | 测试数据清空，业务表行数归 0，库复位为空 |
+
+19 表清单：`admin_accounts advisor_change_logs advisors consent_records daily_logs data_shares export_jobs health_reports meal_items meal_records media_download_logs notifications onboarding_tasks service_day_marks service_notes shipments stage_records users weight_records`。
+
+**Dev 假设**（指引未覆盖、做最小合理决策，待 PM/QA 复核）：
+1. 主键统一 `BIGSERIAL`；枚举值（gender/status/source/ai_status/role/mark/shipments.status/export_jobs.status 等）按语义取最小集，用 `CHECK` 约束落地；如与后续业务模块需求冲突，迁移文件可加列/放宽。
+2. 多数业务表补 `created_at`（02 文档仅部分列出），并给 users 补 `updated_at`——审计常用、零风险。
+3. weight_records 补 `client_uuid` 幂等键列（02 文档 API 契约「POST /weights 幂等键 client_uuid」要求）+ 唯一索引 `(user_id, client_uuid)`。
+4. data_shares 额外加活跃 `invite_code` 唯一索引（「邀请码 24h 单次有效」语义）。
+5. `daily_logs`/`onboarding_tasks` 用复合主键（02 文档明示「user_id+X 唯一」、未列 id）。
+6. FK 默认 `RESTRICT`，仅 `meal_items → meal_records` 用 `ON DELETE CASCADE`（明确父子）；注销「餐照连删」等删除级联策略留给业务模块，M0 不预设。
+7. `media_download_logs` 把 02 文档「file_keys/date_range」拆为 `file_keys JSONB` + `date_range JSONB` 两列。
+
+迁移工具：纯 SQL + `ts-node` 运行器，`_migrations` 账本表跳过已应用文件——**M0 不引入 TypeORM 实体**（符合指引②）。`.env`（含 DATABASE_URL/JWT_SECRET）本地创建且已被 `.gitignore` 拦截，未进 Git。
 
 ---
 
