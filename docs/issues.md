@@ -26,7 +26,7 @@
 | M0-001 | 后端 NestJS 空骨架 | P0 | 已关闭 | `npm run start:dev` 启动；GET /health 返回 200；TypeScript 编译无 error — **Dev 已完成** commit `065f87e` 分支 `feature/m0-server/M0-001`；QA 步骤：`cd server && npm install && npm run start:dev` → 另开窗 `curl -i http://localhost:3000/health` 期望 `HTTP 200` + `{"status":"ok"}`；`npm run build` 退 0 — **✅ QA 通过见下方验收证据，tag `v0.0.1`** |
 | M0-002 | PostgreSQL 表迁移脚本 | P0 | 待 QA | 按 [02-技术架构.md 第三节](./02-技术架构.md) 表全部创建；外键/索引/约束（含 data_shares 活跃唯一约束）正确；`npm run migrate` 幂等。**环境已备**（PM 2026-06-28）：本机 PostgreSQL 16 在跑，目标库=干净空库 `maisimei`（旧项目库已归档为 `maisimei_old`，**勿连**）；`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`（本地 trust 认证无密码）。**注意**：02 文档表清单含 notifications/onboarding_tasks/shipments/media_download_logs/export_jobs，实际 >11 张，**以 02 文档为准全建，标题"11"是旧估值勿当上限** — **Dev 已完成** commit `122b21c` 分支 `feature/m0-rest`，验收证据见下方「Dev 自验·M0-002」 |
 | M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待 QA（待 devtools 真编译）| 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 — **Dev 已完成代码** commit `1cdaeac` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-003」。⚠️ **Dev 环境无法真编译，必须 QA/人工用微信开发者工具导入 `miniprogram/` 真编译确认 4 tab 可点、空白页可预览后才能关闭** |
-| M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待开发 | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 |
+| M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待 QA | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 — **Dev 已完成** commit `7d165e1` 分支 `feature/m0-rest`，证据见下方「Dev 自验·M0-004」 |
 | M0-005 | CI 轻体词表扫描脚本 | P1 | 待开发 | scripts/check-compliance.sh 扫 miniprogram/**/*.{wxml,js} 命中 "减脂/减肥/瘦/燃脂/塑形" 退出码非 0 |
 | M0-006 | CI 密钥扫描 | P1 | 待开发 | scripts/check-secrets.sh 扫 .env* 与已 commit 文件中的明文 token/secret 模式 |
 | M0-007 | Git 远程推通 | P0 | 已关闭 | 推到 Chester 提供的 GitHub 私有仓库 main 分支 — **PM 在骨架阶段完成（commit `50f34c0`，2026-06-28，远程 `ssh://git@github.com/shz910411/Mysmie-.git`）** |
@@ -138,6 +138,21 @@
 **QA 待补**（Dev 做不了，必须人工）：微信开发者工具导入 `miniprogram/` → 真编译 0 error → 4 tab 可点切换 → 各 tab 空白占位页正常渲染。
 
 **Dev 假设**：① `appid` 暂置 `touristappid`（真 appid 是外部依赖 #2 行政办，QA/人工真编译时可在工具内换成测试号或真号）；② tabBar 用纯文字、无 icon PNG（占位阶段免造图标二进制；M0-003 成功标准只要「4 tab 占位」未要求图标）；③ `project.config.json` 放在 `miniprogram/` 内、`libVersion` 置 `3.5.0`。
+
+---
+
+### Dev 自验 · M0-004（2026-06-28 夜，Dev 窗，commit `7d165e1`）
+
+实现：`src/config/env.validation.ts` + main.ts 启动前 `import 'dotenv/config'` → `validateEnv()`。硬必填 `DATABASE_URL`/`JWT_SECRET`，选填 `WX_*`/`OSS_*`/`AI_VISION_*`/`OCR_*`。
+
+| 项 | 命令（从 /tmp 跑、无 .env 干扰）| 结果 |
+|---|---|---|
+| A 缺两个必填 | `env -u DATABASE_URL -u JWT_SECRET node dist/main.js` | `[env] 启动失败：缺少必填环境变量 DATABASE_URL, JWT_SECRET …`，**退出码 1** ✓ |
+| B 仅缺 JWT | `env -u JWT_SECRET DATABASE_URL=… node dist/main.js` | 精确只列 `JWT_SECRET`，**退出码 1** ✓ |
+| C 完整 env | server/ 下带 .env，`PORT=3002 node dist/main.js` | 选填项 `console.warn` 一行（列出 12 个未配集成项）→ 正常启动 → `curl :3002/health` 返 `200 {"status":"ok"}` ✓ |
+| D 收尾 | `lsof -iTCP:3002` | 无残留监听 ✓ |
+
+结论：必填缺失 fail-fast 退出码 1 + 中文明确提示并指向 .env.example；选填缺失仅告警不阻塞，符合指引④。
 
 ---
 
