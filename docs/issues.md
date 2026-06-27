@@ -75,6 +75,26 @@
 ### 本批完成回报格式（写在最后一条 commit 或单独 commit）
 逐条列 M0-002~006 的 状态 / commit hash / 自验结果 / 遗留假设，一句话总结"M0 余下批量完成，待明早 QA 批验"。
 
+### 🌅 Dev 回报 · M0 余下批量（2026-06-28 夜完成）
+
+分支 `feature/m0-rest`（从 main 切，10 个 commit，全部已推 origin，**未碰 main**，等明早 QA 批验后一次性 ff 合并）。各条详细证据见本文件对应「Dev 自验」块。
+
+| Issue | 状态 | 代码 commit | 自验结果 |
+|---|---|---|---|
+| M0-002 数据库迁移 | 待 QA | `122b21c` | 19 表全建；`migrate` 二次跑 skip 退0（幂等）；data_shares 活跃唯一/whr 生成列/FK 拦截均实测通过 |
+| M0-003 小程序空壳 | **待 QA（待 devtools 真编译）** | `1cdaeac` | 7 个 JSON 合法 + 4 页文件齐全 + 4 tab 配置一致 + 文案 0 违禁词；⚠️ **真编译 Dev 做不了，必须 QA 人工微信开发者工具确认** |
+| M0-004 env 必填检查 | 待 QA | `7d165e1` | 缺 DATABASE_URL/JWT_SECRET → 退1+明确提示；完整 env → 启动+选填告警+/health 200 |
+| M0-005 轻体词表扫描 | 待 QA | `32a5d3d` | 三态（干净退0/植入退1显命中/清除退0）通过 |
+| M0-006 密钥扫描 | 待 QA | `5c52c73` | 六态（干净/阿里云AK/AWS/通用/.env入库/回归）全过，dev 占位不误报 |
+
+**遗留假设汇总**（均做了最小合理决策，待 PM/QA 复核，详见各 Dev 自验块）：
+- M0-002：主键 BIGSERIAL、枚举值最小集用 CHECK、补 created_at/updated_at、加 client_uuid 幂等键、invite_code 活跃唯一、复合主键(daily_logs/onboarding_tasks)、仅 meal_items 级联删、media_download_logs 拆 file_keys/date_range 两列。
+- M0-003：appid 暂置 `touristappid`（真 appid 待行政）、tabBar 纯文字无图标、project.config.json 置 miniprogram/ 内。
+- M0-005：词表取核心 5 词（极限词留 PM 扩）、附带扫 .json。
+- M0-006：强模式覆盖私钥/AWS/阿里云/sk-/gh*_；排除 package-lock；本地 .env* 只扫强模式不扫通用赋值。
+
+**一句话**：M0 余下批量（002–006）开发+自验全部完成，5 条均「待 QA」（其中 M0-003 真编译待人工 devtools），代码与证据已推 `feature/m0-rest`，**待明早 QA 批验**。M0-006 后即停，未越界做 M1。
+
 ### QA 验收证据 · M0-001（2026-06-28，QA 窗，tag `v0.0.1`）
 
 环境：node v22.22.0 / npm 10.9.4，分支 `feature/m0-server/M0-001`。
