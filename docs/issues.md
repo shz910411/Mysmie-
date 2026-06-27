@@ -24,7 +24,7 @@
 | ID | 标题 | 优先级 | 状态 | 成功标准 |
 |---|---|---|---|---|
 | M0-001 | 后端 NestJS 空骨架 | P0 | 已关闭 | `npm run start:dev` 启动；GET /health 返回 200；TypeScript 编译无 error — **Dev 已完成** commit `065f87e` 分支 `feature/m0-server/M0-001`；QA 步骤：`cd server && npm install && npm run start:dev` → 另开窗 `curl -i http://localhost:3000/health` 期望 `HTTP 200` + `{"status":"ok"}`；`npm run build` 退 0 — **✅ QA 通过见下方验收证据，tag `v0.0.1`** |
-| M0-002 | PostgreSQL 11 张表迁移脚本 | P0 | 待开发 | 按 [02-技术架构.md 第三节](./02-技术架构.md) 11 张表全部创建；外键/索引/约束（含 data_shares 唯一约束）正确；`npm run migrate` 幂等 |
+| M0-002 | PostgreSQL 表迁移脚本 | P0 | 待开发 | 按 [02-技术架构.md 第三节](./02-技术架构.md) 表全部创建；外键/索引/约束（含 data_shares 活跃唯一约束）正确；`npm run migrate` 幂等。**环境已备**（PM 2026-06-28）：本机 PostgreSQL 16 在跑，目标库=干净空库 `maisimei`（旧项目库已归档为 `maisimei_old`，**勿连**）；`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`（本地 trust 认证无密码）。**注意**：02 文档表清单含 notifications/onboarding_tasks/shipments/media_download_logs/export_jobs，实际 >11 张，**以 02 文档为准全建，标题"11"是旧估值勿当上限** |
 | M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待开发 | 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 |
 | M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待开发 | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 |
 | M0-005 | CI 轻体词表扫描脚本 | P1 | 待开发 | scripts/check-compliance.sh 扫 miniprogram/**/*.{wxml,js} 命中 "减脂/减肥/瘦/燃脂/塑形" 退出码非 0 |
