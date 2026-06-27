@@ -23,7 +23,7 @@
 
 | ID | 标题 | 优先级 | 状态 | 成功标准 |
 |---|---|---|---|---|
-| M0-001 | 后端 NestJS 空骨架 | P0 | 待开发 | `npm run start:dev` 启动；GET /health 返回 200；TypeScript 编译无 error |
+| M0-001 | 后端 NestJS 空骨架 | P0 | 待 QA | `npm run start:dev` 启动；GET /health 返回 200；TypeScript 编译无 error — **Dev 已完成** commit `065f87e` 分支 `feature/m0-server/M0-001`；QA 步骤：`cd server && npm install && npm run start:dev` → 另开窗 `curl -i http://localhost:3000/health` 期望 `HTTP 200` + `{"status":"ok"}`；`npm run build` 退 0 |
 | M0-002 | PostgreSQL 11 张表迁移脚本 | P0 | 待开发 | 按 [02-技术架构.md 第三节](./02-技术架构.md) 11 张表全部创建；外键/索引/约束（含 data_shares 唯一约束）正确；`npm run migrate` 幂等 |
 | M0-003 | 小程序空壳 + 微信开发者工具能预览 | P0 | 待开发 | 微信开发者工具导入 `miniprogram/`，能预览首页空白页；底部 tab 4 个（称重/打卡/汇总/我的）占位 |
 | M0-004 | .env.example 已就位，启动检查必填项 | P0 | 待开发 | 缺关键 env（DATABASE_URL/JWT_SECRET）启动报错给出明确提示 |
