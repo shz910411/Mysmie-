@@ -1,0 +1,20 @@
+{
+  "description": "迈思美轻体记录工具 · 小程序空壳",
+  "projectname": "maisimei-miniprogram",
+  "compileType": "miniprogram",
+  "libVersion": "3.5.0",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "bigPackageSizeSupport": true
+  },
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  }
+}

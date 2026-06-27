@@ -1,0 +1,28 @@
+{
+  "pages": [
+    "pages/weigh/weigh",
+    "pages/meal/meal",
+    "pages/summary/summary",
+    "pages/me/me"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FAFBF2",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "迈思美",
+    "backgroundColor": "#FAFBF2"
+  },
+  "tabBar": {
+    "color": "#85907A",
+    "selectedColor": "#0D8456",
+    "backgroundColor": "#FAFBF2",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/weigh/weigh", "text": "称重" },
+      { "pagePath": "pages/meal/meal", "text": "打卡" },
+      { "pagePath": "pages/summary/summary", "text": "汇总" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
