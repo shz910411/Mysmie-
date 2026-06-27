@@ -1,0 +1,36 @@
+# 依赖
+node_modules/
+miniprogram_npm/
+
+# 环境与密钥
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# 小程序
+unpackage/
+project.private.config.json
+
+# 构建产物
+dist/
+build/
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# 测试
+coverage/
+*.test.local.json
+
+# 用户上传与缓存（绝不进 Git）
+uploads/
+tmp/
