@@ -31,7 +31,49 @@
 | M0-006 | CI 密钥扫描 | P1 | 待开发 | scripts/check-secrets.sh 扫 .env* 与已 commit 文件中的明文 token/secret 模式 |
 | M0-007 | Git 远程推通 | P0 | 已关闭 | 推到 Chester 提供的 GitHub 私有仓库 main 分支 — **PM 在骨架阶段完成（commit `50f34c0`，2026-06-28，远程 `ssh://git@github.com/shz910411/Mysmie-.git`）** |
 
-**M0 完成判据**：以上 7 条全部 QA 通过；空骨架能跑；DB 11 表存在；小程序空壳能预览；推到远程。
+**M0 完成判据**：以上 7 条全部 QA 通过；空骨架能跑；DB 全表存在；小程序空壳能预览；推到远程。
+
+---
+
+## 🌙 M0 余下批量开发指引（PM 2026-06-28 夜 · 自主跑 2-3 小时）
+
+> Chester 不在场逐条确认。本节预解决了所有可预见歧义，Dev 一路跑完 M0-002→M0-006，不要停下等人。
+
+### 范围与顺序（按此序，P0 先于 P1）
+1. **M0-002** 数据库迁移（最高价值，可完全自验）
+2. **M0-003** 小程序空壳（代码写完，真编译验证留给 QA/人工的微信开发者工具——见下方 caveat）
+3. **M0-004** 启动 env 检查
+4. **M0-005** CI 轻体词表扫描（P1）
+5. **M0-006** CI 密钥扫描（P1）
+
+### 分支与合并（本批专用，区别于平时）
+- 全部在**单一分支** `feature/m0-rest`（从当前 main 切）上做，**逐 Issue 一个或多个 commit**，commit 带 Issue 号。
+- 频繁 `git push`（每条 Issue 完就推），防窗口中断丢工作。
+- **不要碰 main**——平时的"QA 逐条 ff 合并"在本批改为：明早 QA 批量验完整个 M0 后**一次性 ff 合 main**。这是 PM 对夜间无人值守的有意调整，非违规。
+
+### 自主护栏（无人值守关键）
+- 每条 Issue：实现 → 用真实命令自验 → 把验证证据贴进本文件对应 Issue 下方 → 状态改 `待 QA`。
+- **遇到本节没覆盖的新歧义**：不要停下空等。做**最小合理假设**，在该 Issue 下写一行 `Dev 假设：……`，然后继续；明早 PM/QA 复核。（这是对夜间批量的特例——平时该停下问 PM，但无人值守时"停"=浪费整个窗口。）
+- **不得越界做 M1**。M0-006 做完即停，回头复验自己的工作，等 PM 派 M1。早做完就 STOP，别找活干。
+- Karpathy 4 守则照常：极简、外科手术、每行 diff 可追溯、开工前重读成功标准。
+
+### 预解决决策（直接用，别再问）
+
+**① 建表清单 = 19 张**（标题"11"是旧估值，作废）。以 [02-技术架构.md 第三节](./02-技术架构.md) 列定义为准，全建：
+`users` `advisors` `admin_accounts` `consent_records` `weight_records` `meal_records` `meal_items` `daily_logs` `advisor_change_logs` `data_shares` `service_notes` `service_day_marks` `stage_records` `health_reports` `notifications` `onboarding_tasks` `shipments` `media_download_logs` `export_jobs`
+
+**② 迁移工具**：你定，但**最小化**——纯 SQL 文件 + 一个 migrate 运行脚本，或 node-pg-migrate 皆可。**M0 不引入 TypeORM 实体**（那是各业务模块开发时的事）；M0 只要"表结构存在 + `npm run migrate` 可重复跑不报错（幂等）"。
+
+**③ data_shares 活跃唯一约束**：用部分唯一索引 `UNIQUE (owner_user_id, viewer_user_id) WHERE status='active'`——允许历史 revoked 记录重复，只锁活跃关系。
+
+**④ env 必填 vs 选填**（M0-004）：启动**硬性必填** = `DATABASE_URL` `JWT_SECRET`（缺则 fail-fast 报明确中文/英文提示并退出）；**选填只告警** = `WX_*` `OSS_*` `AI_VISION_*` `OCR_*`（这些集成在后续里程碑接，M0 缺不阻塞启动，仅 console.warn）。
+
+**⑤ 目标数据库**：`DATABASE_URL=postgresql://sunchester@localhost:5432/maisimei`（干净空库，本地 trust 无密码）。旧库 `maisimei_old` 勿连。
+
+**⑥ M0-003 真编译 caveat**：小程序 .wxml/.json 写完后，你**无法**用微信开发者工具真编译（环境所限）。允许的自验=app.json/page.json 用 JSON.parse 校验合法、目录结构齐全、4 个 tab 配置正确。状态改 `待 QA` 但在证据区注明「**代码就绪，待微信开发者工具真编译验证（QA/人工）**」——绝不声称已编译通过。
+
+### 本批完成回报格式（写在最后一条 commit 或单独 commit）
+逐条列 M0-002~006 的 状态 / commit hash / 自验结果 / 遗留假设，一句话总结"M0 余下批量完成，待明早 QA 批验"。
 
 ### QA 验收证据 · M0-001（2026-06-28，QA 窗，tag `v0.0.1`）
 
