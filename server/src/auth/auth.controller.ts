@@ -3,8 +3,11 @@ import {
   Controller,
   NotFoundException,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './current-user.decorator';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +29,12 @@ export class AuthController {
       throw new NotFoundException();
     }
     return this.auth.devLogin(body?.openid);
+  }
+
+  /** 绑定手机号（需登录态；真机验收项）。 */
+  @UseGuards(JwtAuthGuard)
+  @Post('phone')
+  phone(@CurrentUser() userId: number, @Body() body: { code?: string }) {
+    return this.auth.bindPhone(userId, body?.code ?? '');
   }
 }
