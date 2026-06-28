@@ -312,6 +312,35 @@ S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-00
 
 ---
 
+### 🔬 QA 批量验收 · M1（2026-06-28，QA 窗，分支 `feature/m1`）
+
+环境：PostgreSQL 16.14 / node v22.22.0 / NODE_ENV=development。**真起 dev server + dev 旁路真 JWT + 干净临时库 `maisimei_qa_m1` 端到端真打接口验真入库**，非读 Dev 证据放行。
+
+**后端 6 条 + 安全红线 + M0-006 修复 = QA 全过：**
+
+| Issue | QA 真复跑结果 | 判定 |
+|---|---|---|
+| M1-001b 迁移002 | build 0 error；干净库 apply 001+002；`birth_year integer` 在；账本记 2 条；二次幂等 skip 退0；19 表 | ✅ 过 |
+| M1-001 dev旁路 | dev-login isNew true→false 同 userId、JWT `sub=1`、openid 真入库；真 login 无凭证 503 | ✅ dev 路径过 |
+| M1-001 **安全红线** | **`NODE_ENV=production` → dev-login 404 / probe 404 / health 200 / 真 login 503**；无 .env 无 NODE_ENV fail-safe 默认 404；守卫默认关闭 | ✅ 过 |
+| M1-003 建档 | 无 token 401；GET 默认 null；PUT 真入库 `female\|1991\|170.0`；年龄↔birth_year 双向；部分更新只动指定列；校验 400 四态 | ✅ 过 |
+| M1-004 同意 | grant active；同版本幂等不重插(1行)；换版本 v1 revoked/v2 active 留痕；DELETE 写 revoked_at；坏 type/缺 version 400 | ✅ 过 |
+| M1-008 健康守卫 | 无 token 401；未同意 403；同意 200 unlocked；撤回即时重锁 403；坏 token 401 | ✅ 过 |
+| M1-002 本地部分 | 无 token 401；无 code 400；无凭证 503；`users.phone` 唯一索引实测拦重复(23505)→409 前提成立 | ✅ 本地过 |
+| M0-006 修复(`a44d578`) | 收紧为「仅引号字面量值」→真实树(含 M1 `process.env.X`)退0不误报；引号密钥/AWS/阿里云真钥仍全抓退1→**检出无回归** | ✅ 过 |
+
+**前端 4 条（M1-005/6/7/9）静态就绪度 QA 全过**：7 页 js/json/wxml 齐、3 新页 JSON 合法、appid 正式号 `wx4bc078e96fffcd89`、0 违禁词；**S2 健康同意铁律合规**（privacy/health 独立 checkbox-group、均无 `checked` 默认=非默认勾选、health 可选不捆绑、提示「不勾选仍可浏览记录功能锁定」）。
+
+**📌 部署 caveat（非阻塞，给 Dev/部署）**：dev-login/probe 默认关闭，生产显式 `NODE_ENV=production` 即 404；但**生产绝不能带含 `NODE_ENV=development` 的 dev `.env`**（dotenv 会加载→后门暴露）。M0-006 已保证 .env 不进 Git，正路安全。
+
+**⏳ 仍需收尾（不能由 QA 本地关闭）：**
+- **前端真编译铁律**（M1-005/6/7/9）：须微信开发者工具导入 `miniprogram/` 真编译 + 走 **S1 登录→S2 同意→S3 建档→首页**全链路（dev 后端起在 `:3000`，前端 `config.js` 已指向）。⚠️ `login.wxml` 含 `wx:if="{{dev}}"`，node--check 验不出，必须真编译。
+- **真机补验**（M1 判据②，凭证到位后补）：M1-001 真微信登录、M1-002 手机号解密——须 Chester 填 `server/.env` 的 `WX_APPSECRET`。
+
+**批量结论**：M1 后端 6 条 + 安全红线 + M0-006 修复 **QA 全过**；前端 4 条静态就绪、**真编译+S1→S2→S3 全链路待 devtools**；M1-002 真解密/M1-001 真登录待真机。**前端真编译过前不 ff 合 main、不打 v0.2.0。**
+
+---
+
 ## M2-M9 · 待 M1 通过后由 PM 拆出 Issue
 
 > PM 当前只先拆 M0+M1。Dev 窗跑通 M0 后 PM 立即拆 M1 完整 Issue；M1 完成后再拆 M2，避免一次性拆太多失去机动空间（视频 03"小步迭代"建议）。
