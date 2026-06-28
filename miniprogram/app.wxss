@@ -22,3 +22,58 @@ page {
   font-size: 26rpx;
   color: #85907A;
 }
+
+/* 引导页（S1/S2/S3）通用样式 */
+.onboard {
+  padding: 80rpx 48rpx;
+}
+.onboard__brand {
+  font-size: 48rpx;
+  color: #0D8456;
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+.onboard__title {
+  font-size: 40rpx;
+  color: #233710;
+  margin-bottom: 48rpx;
+}
+.onboard__hint {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #85907A;
+}
+.row {
+  margin-bottom: 32rpx;
+}
+.input {
+  border-bottom: 1rpx solid #E4F1EC;
+  padding: 20rpx 0;
+  font-size: 30rpx;
+}
+.opt {
+  margin-right: 40rpx;
+  font-size: 30rpx;
+}
+.consent-row {
+  margin-bottom: 24rpx;
+}
+.consent-label {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #233710;
+}
+.btn-primary {
+  background: #0D8456;
+  color: #fff;
+  border-radius: 0;
+  margin-top: 16rpx;
+}
+.btn-line {
+  background: #fff;
+  color: #0D8456;
+  border: 1rpx solid #0D8456;
+  border-radius: 0;
+  margin-top: 24rpx;
+}

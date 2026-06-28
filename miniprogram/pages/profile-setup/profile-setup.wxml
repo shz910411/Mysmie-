@@ -1,0 +1,14 @@
+<view class="onboard">
+  <view class="onboard__title">完善资料</view>
+
+  <radio-group class="row" bindchange="onGender">
+    <label class="opt"><radio value="female" /> 女</label>
+    <label class="opt"><radio value="male" /> 男</label>
+    <label class="opt"><radio value="other" /> 其他</label>
+  </radio-group>
+
+  <input class="row input" type="number" placeholder="年龄" bindinput="onAge" />
+  <input class="row input" type="number" placeholder="身高 (cm)" bindinput="onHeight" />
+
+  <button class="btn-primary" bindtap="onSubmit">完成，进入首页</button>
+</view>

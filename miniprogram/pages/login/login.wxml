@@ -1,0 +1,7 @@
+<view class="onboard">
+  <view class="onboard__brand">迈思美</view>
+  <view class="onboard__title">登录</view>
+  <button class="btn-primary" bindtap="onWxLogin">微信登录</button>
+  <button class="btn-line" open-type="getPhoneNumber" bindgetphonenumber="onGetPhone">授权手机号</button>
+  <button wx:if="{{dev}}" class="btn-line" bindtap="onDevLogin">开发登录（仅本地）</button>
+</view>

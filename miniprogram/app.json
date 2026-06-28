@@ -3,7 +3,10 @@
     "pages/weigh/weigh",
     "pages/meal/meal",
     "pages/summary/summary",
-    "pages/me/me"
+    "pages/me/me",
+    "pages/login/login",
+    "pages/consent/consent",
+    "pages/profile-setup/profile-setup"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FAFBF2",

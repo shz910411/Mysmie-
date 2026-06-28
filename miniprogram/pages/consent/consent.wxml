@@ -1,0 +1,20 @@
+<view class="onboard">
+  <view class="onboard__title">隐私与授权</view>
+
+  <checkbox-group class="consent-row" bindchange="onPrivacyChange">
+    <label class="consent-label">
+      <checkbox value="privacy" />
+      <text>我已阅读并同意《隐私政策》（必选）</text>
+    </label>
+  </checkbox-group>
+
+  <checkbox-group class="consent-row" bindchange="onHealthChange">
+    <label class="consent-label">
+      <checkbox value="health" />
+      <text>我同意收集健康数据用于记录（可选，不影响浏览）</text>
+    </label>
+  </checkbox-group>
+
+  <button class="btn-primary" bindtap="onAgree">同意并继续</button>
+  <view class="onboard__hint">不勾选健康数据仍可浏览，记录功能将锁定。</view>
+</view>
