@@ -12,8 +12,9 @@ fail=0
 # 真实密钥强模式（高置信，跨所有目标统一用）：私钥块 / AWS AK / 阿里云 AK / OpenAI / GitHub PAT
 STRONG='-----BEGIN[ A-Z]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|(LTAI|AKID)[0-9A-Za-z]{12,22}|sk-[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{20,}'
 
-# 通用密钥赋值（仅扫已跟踪文件，配合占位白名单降误报）
-GENERIC='(secret|token|passwd|password|appsecret|api[_-]?key|access[_-]?key)["'"'"' ]*[:=][ "'"'"']*[A-Za-z0-9/_+.-]{16,}'
+# 通用密钥赋值：仅匹配「引号包裹的字面量值」，避免误报 process.env.X / 函数调用等正确写法。
+# 真硬编码密钥必是引号字符串；读 env / storage 不带引号值，天然排除。
+GENERIC='(secret|token|passwd|password|appsecret|api[_-]?key|access[_-]?key)["'"'"' ]*[:=] *["'"'"'][A-Za-z0-9/_+.-]{16,}'
 PLACEHOLDER='example|your[_-]|changeme|placeholder|xxxx|dummy|<[a-z]|not-a-real|fill[_-]?in|dev-local'
 
 # ── 检查 1：.env 家族不得入库（仅允许 .env.example）──
