@@ -243,20 +243,35 @@
 
 ---
 
-## M1 · 登录建档（待 M0 全过后开启）
+## M1 · 登录建档（M0 已过，🟢 开启）
 
-| ID | 标题 | 优先级 | 状态 |
-|---|---|---|---|
-| M1-001 | 后端 auth 模块（POST /auth/login code2Session）| P0 | 待开发 |
-| M1-002 | 后端 auth 模块（POST /auth/phone 解密手机号）| P0 | 待开发 |
-| M1-003 | 后端 users 模块（GET/PUT /me/profile 轻建档）| P0 | 待开发 |
-| M1-004 | 后端 consent 模块（POST/DELETE /me/consents 带版本）| P0 | 待开发 |
-| M1-005 | 小程序 S1 登录页（微信授权 + 手机号原生组件）| P0 | 待开发 |
-| M1-006 | 小程序 S2 双层同意页（健康数据独立非默认勾选）| P0 | 待开发 |
-| M1-007 | 小程序 S3 轻建档页（性别/年龄/身高 1 屏）| P0 | 待开发 |
-| M1-008 | 全局守卫：未同意健康数据则记录功能锁定 | P0 | 待开发 |
+> PM 拆解依据：01 文档 S1/S2/S3 成功标准 + 02 文档 auth/profile/consent API 契约。开发顺序按下表 ID（schema 补丁 → 后端 → 守卫 → 前端 → 真机项最后）。
 
-**M1 完成判据**：新用户 ≤3 步进首页；同意带版本入库；拒绝健康同意则称重/打卡入口锁定（点击友好提示）。
+### 两条 M1 设计决策（PM，2026-06-29，开工前必读）
+
+**① dev 登录旁路（解决微信登录本地跑不了）**
+微信 `code2Session`/`getPhoneNumber` 依赖真机+真 AppSecret，本地/QA 无真机跑不了。M1-001 必须同时实现 `POST /auth/dev-login`（**仅 `NODE_ENV=development` 生效**，传 `{openid?}` 直接 upsert+签 JWT），让后端 profile/consent/守卫 + 前端页面全部能本地真实联调。**安全红线**：生产构建该路由必须不存在/返 404，QA 必验。真 `code2Session` 标"真机验收项"。
+
+**② 年龄存出生年**
+S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-001b 补 migration `002` 加 `users.birth_year INT`；S3 让用户填年龄，后端转存 `birth_year = 当前年 - 年龄`，显示再算回。不存 age（会过时）。
+
+### Issue 表
+
+| ID | 标题 | 优先级 | 状态 | 成功标准 | 依赖真机/凭证 |
+|---|---|---|---|---|---|
+| M1-001b | migration 002：`users` 补 `birth_year INT` | P0 | 待开发 | `002_*.sql` 幂等；列存在；`npm run migrate` 跑通且账本记录 | 否 |
+| M1-001 | 后端 auth/login（code2Session）+ dev 旁路 | P0 | 待开发 | `POST /auth/login {code}`→jscode2session→openid→upsert users→签 JWT，返 `{token,isNew}`；openid 唯一；session_key 不外泄。**同时** `POST /auth/dev-login` 仅 dev 生效、生产 404 | 真登录需 AppID/Secret+真机；**dev 旁路本地全验** |
+| M1-002 | 后端 auth/phone（手机号） | P0 | 待开发 | `POST /auth/phone`→换/解密手机号→写 `users.phone`（唯一约束）；重复手机号提示迁移而非建新号 | ⚠️ 真 AppSecret+真机；本地 dev 手填旁路 |
+| M1-003 | 后端 users/profile（轻建档） | P0 | 待开发 | `GET/PUT /me/profile`：gender/birth_year/height_cm 入库，target_weight_kg 可选；可改 | 否（dev 旁路 JWT 即可验） |
+| M1-004 | 后端 consent（带版本+撤回） | P0 | 待开发 | `POST /me/consents {type,version}`→consent_records；`DELETE /me/consents/:type`→写 revoked_at；同意带版本 | 否 |
+| M1-008 | 全局守卫 HealthConsentGuard | P0 | 待开发 | 未同意 health_data 时，称重/打卡类接口返 403；同意后解锁。后端守卫 + 前端入口禁用+友好提示 | 否 |
+| M1-005 | 小程序 S1 登录页 | P0 | 待开发 | wx.login→/auth/login；getPhoneNumber 按钮→/auth/phone；**dev 环境提供"开发登录"入口走 dev-login**；新用户 ≤3 步进首页 | 真手机号需真机；流程本地 dev 验 |
+| M1-006 | 小程序 S2 双层同意页 | P0 | 待开发 | 两层：通用隐私(必勾)+健康数据(**独立、非默认勾选、不捆绑**)；拒绝健康同意可浏览但记录功能锁；同意带版本回传 | 否 |
+| M1-007 | 小程序 S3 轻建档页 | P0 | 待开发 | 性别/年龄/身高 1 屏→PUT /me/profile(年龄转 birth_year)；完成进首页；可在"我的"改 | 否 |
+
+**M1 完成判据**：①新用户走 S1→S2→S3 ≤3 步进首页（dev 旁路本地可验全链）；②真机微信登录+手机号入库（真机验收项，凭证到位后补验）；③拒绝健康同意则记录功能锁定、同意后解锁；④同意带版本入库；⑤dev 旁路生产环境不存在。
+
+**M1 前置依赖（需 Chester 提供）**：迈思美小程序 **AppID + AppSecret**（填 `.env` 的 `WX_APPID/WX_APPSECRET`，密钥不进 Git）。⚠️ 即使凭证未到位，除 M1-001 真登录/M1-002 手机号外的 7 条都能用 dev 旁路本地全开发，不阻塞。
 
 ---
 
