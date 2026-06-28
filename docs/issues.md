@@ -268,10 +268,14 @@ S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-00
 | M1-005 | 小程序 S1 登录页 | P0 | 待开发 | wx.login→/auth/login；getPhoneNumber 按钮→/auth/phone；**dev 环境提供"开发登录"入口走 dev-login**；新用户 ≤3 步进首页 | 真手机号需真机；流程本地 dev 验 |
 | M1-006 | 小程序 S2 双层同意页 | P0 | 待开发 | 两层：通用隐私(必勾)+健康数据(**独立、非默认勾选、不捆绑**)；拒绝健康同意可浏览但记录功能锁；同意带版本回传 | 否 |
 | M1-007 | 小程序 S3 轻建档页 | P0 | 待开发 | 性别/年龄/身高 1 屏→PUT /me/profile(年龄转 birth_year)；完成进首页；可在"我的"改 | 否 |
+| M1-009 | project.config.json appid 占位→正式号 | P1 | 待开发 | appid 从 `touristappid` 改为 `wx4bc078e96fffcd89`（Chester 2026-06-29 确认=迈思美正式号）；微信开发者工具重编译仍通过 4 tab 可预览 | 真机/开发者工具需该号开发权限 |
 
 **M1 完成判据**：①新用户走 S1→S2→S3 ≤3 步进首页（dev 旁路本地可验全链）；②真机微信登录+手机号入库（真机验收项，凭证到位后补验）；③拒绝健康同意则记录功能锁定、同意后解锁；④同意带版本入库；⑤dev 旁路生产环境不存在。
 
-**M1 前置依赖（需 Chester 提供）**：迈思美小程序 **AppID + AppSecret**（填 `.env` 的 `WX_APPID/WX_APPSECRET`，密钥不进 Git）。⚠️ 即使凭证未到位，除 M1-001 真登录/M1-002 手机号外的 7 条都能用 dev 旁路本地全开发，不阻塞。
+**M1 前置依赖（需 Chester 提供）**：迈思美小程序 **AppID + AppSecret**。
+- **AppID = `wx4bc078e96fffcd89`**（Chester 2026-06-29 确认正式号）→ M1-009 把 project.config.json 占位换成它。
+- **AppSecret 待 Chester 填** `.env` 的 `WX_APPSECRET`（密钥不进 Git）——真登录(M1-001)/手机号(M1-002)的真机验收要用，不急。
+- ⚠️ 即使 AppSecret 未到位，除 M1-001 真登录/M1-002 手机号外的 7 条都能用 dev 旁路本地全开发，不阻塞。
 
 ---
 
