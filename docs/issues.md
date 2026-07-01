@@ -343,9 +343,30 @@ S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-00
 
 ---
 
-## M2-M9 · 待 M1 通过后由 PM 拆出 Issue
+## M2 · 称重主线（S4/S5/S5b）+ 全局样式地基 🟢 开启
 
-> PM 当前只先拆 M0+M1。Dev 窗跑通 M0 后 PM 立即拆 M1 完整 Issue；M1 完成后再拆 M2，避免一次性拆太多失去机动空间（视频 03"小步迭代"建议）。
+> **设计基准**：所有前端照 [03-UI蓝本.md](./03-UI蓝本.md)，⚠️**取最终 EDITORIAL 值**（2px 直角墨绿按钮 / 去卡片用发丝线 / 超大 Didot 数字 / 数据对比表年报式等宽右对齐）。雏形对应屏：home=S4 / weighing=S5 / compare=S5b。
+
+| ID | 标题 | 优先级 | 状态 | 成功标准 | 依赖 |
+|---|---|---|---|---|---|
+| M2-000 | app.wxss 全局设计系统 | P0 | 待开发 | 照蓝本第2-3节落 CSS 变量最终值（--paper/--forest/--ink2/--line2 等）+ 通用类（btn / btn.ghost 文字链 / card 发丝线分区 / eyebrow / h-title / portion / seg / stepper / spark / cmp-table）；微信开发者工具编译过 | 否 |
+| M2-001 | 后端 weight 模块 | P0 | 待开发 | POST /weights（体重+14 体成分+source+is_morning+client_uuid 幂等）；GET /weights?range（曲线）；GET /me/weight-compare?from&to（14 维度对比）；**挂 HealthConsentGuard（未同意 health_data→403，对齐 M1-008）**；同日多次保留最后（measured_at DESC）；dev 登录后真入库 | 否 |
+| M2-002 | 小程序 S4 称重主页（称重 tab） | P0 | 待开发 | 照蓝本 home 屏：brandbar 居中 / 日期行（通知🔴）/ **今晨体重 92px Didot**（未称显"今天还没称"）/ 主按钮"开始称重"+文字链"手动记录" / 近 7 天 spark / 隐私微文案；今日摄入卡+三指标行+服务入口**先静态占位**（M3/M5 填真实）；打开即称重页；今晨体重从后端取真实 | 否 |
+| M2-003 | 小程序 S5 称重流程 | P0 | 待开发 | 照蓝本三态：态A 蓝牙模拟连接（脉冲圆环 150px）/ 态B 读数成功（readout 62px）/ 态C 手动兜底（下划线输入带昨值）；15s 超时切态C；蓝牙**本地模拟**（真 vtble 插件 P1 后续）；断网/无蓝牙手动 20 秒完成；source(manual/photo/ble) 正确入库 | 蓝牙模拟 |
+| M2-004 | 小程序 S5b 数据对比页 | P0 | 待开发 | 照蓝本：深绿 hero 三栏（历经天数/体重变化↓/脂肪变化↓ Didot）+引文+ribbon；**cmp-table 14 行年报表**（Didot 17px 等宽右对齐，昨值灰今值黑，状态标 good绿/warn）；鼓励语轮换；数值分析卡（中性解读）；合规脚注；任意两次可对比 | 否 |
+| M1-010 | M1 三页按雏形对齐（补做） | P1 | 待开发 | login/consent/profile-setup 用 M2-000 的 app.wxss 对齐雏形 welcome/consent/profile 视觉（直角墨绿按钮/去卡片发丝线/Didot 数字）；功能不回归；真编译过 | 否 |
+
+**M2 完成判据**：dev 登录后走「主页 → 开始称重 →（模拟）读数 → 保存 → 14 维度对比页」全链路真实落库；**未同意健康数据则称重接口 403**（HealthConsentGuard 生效，QA 重点验，对齐 M1-008）；三屏照蓝本视觉；微信开发者工具真编译过。
+
+**M2 开发顺序**：M2-000（app.wxss 地基，前端一切基础）→ M2-001（后端 weight）→ M2-002（主页）→ M2-003（称重流程）→ M2-004（对比页）→ M1-010（顺带对齐旧三页）。
+
+**M2 依赖**：无真机（蓝牙本地模拟），dev 旁路登录后全本地可验；AI/AppSecret 无关。
+
+---
+
+## M3-M9 · 待 M2 通过后由 PM 拆出
+
+> 保持小步（视频 03）：M2 完成后 PM 拆 M3（拍照打卡⭐，含 AI 视觉接口对接）。
 
 ---
 
