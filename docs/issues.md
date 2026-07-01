@@ -349,18 +349,48 @@ S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-00
 
 | ID | 标题 | 优先级 | 状态 | 成功标准 | 依赖 |
 |---|---|---|---|---|---|
-| M2-000 | app.wxss 全局设计系统 | P0 | 待开发 | 照蓝本第2-3节落 CSS 变量最终值（--paper/--forest/--ink2/--line2 等）+ 通用类（btn / btn.ghost 文字链 / card 发丝线分区 / eyebrow / h-title / portion / seg / stepper / spark / cmp-table）；微信开发者工具编译过 | 否 |
-| M2-001 | 后端 weight 模块 | P0 | 待开发 | POST /weights（体重+14 体成分+source+is_morning+client_uuid 幂等）；GET /weights?range（曲线）；GET /me/weight-compare?from&to（14 维度对比）；**挂 HealthConsentGuard（未同意 health_data→403，对齐 M1-008）**；同日多次保留最后（measured_at DESC）；dev 登录后真入库 | 否 |
-| M2-002 | 小程序 S4 称重主页（称重 tab） | P0 | 待开发 | 照蓝本 home 屏：brandbar 居中 / 日期行（通知🔴）/ **今晨体重 92px Didot**（未称显"今天还没称"）/ 主按钮"开始称重"+文字链"手动记录" / 近 7 天 spark / 隐私微文案；今日摄入卡+三指标行+服务入口**先静态占位**（M3/M5 填真实）；打开即称重页；今晨体重从后端取真实 | 否 |
-| M2-003 | 小程序 S5 称重流程 | P0 | 待开发 | 照蓝本三态：态A 蓝牙模拟连接（脉冲圆环 150px）/ 态B 读数成功（readout 62px）/ 态C 手动兜底（下划线输入带昨值）；15s 超时切态C；蓝牙**本地模拟**（真 vtble 插件 P1 后续）；断网/无蓝牙手动 20 秒完成；source(manual/photo/ble) 正确入库 | 蓝牙模拟 |
-| M2-004 | 小程序 S5b 数据对比页 | P0 | 待开发 | 照蓝本：深绿 hero 三栏（历经天数/体重变化↓/脂肪变化↓ Didot）+引文+ribbon；**cmp-table 14 行年报表**（Didot 17px 等宽右对齐，昨值灰今值黑，状态标 good绿/warn）；鼓励语轮换；数值分析卡（中性解读）；合规脚注；任意两次可对比 | 否 |
-| M1-010 | M1 三页按雏形对齐（补做） | P1 | 待开发 | login/consent/profile-setup 用 M2-000 的 app.wxss 对齐雏形 welcome/consent/profile 视觉（直角墨绿按钮/去卡片发丝线/Didot 数字）；功能不回归；真编译过 | 否 |
+| M2-000 | app.wxss 全局设计系统 | P0 | 待 QA（待 devtools）| 照蓝本第2-3节落 CSS 变量最终值（--paper/--forest/--ink2/--line2 等）+ 通用类（btn / btn.ghost 文字链 / card 发丝线分区 / eyebrow / h-title / portion / seg / stepper / spark / cmp-table）；微信开发者工具编译过 — **Dev 已完成** `d306dde` |
+| M2-001 | 后端 weight 模块 | P0 | 待 QA | POST /weights（体重+14 体成分+source+is_morning+client_uuid 幂等）；GET /weights?range（曲线）；GET /me/weight-compare?from&to（14 维度对比）；**挂 HealthConsentGuard（未同意 health_data→403，对齐 M1-008）**；同日多次保留最后（measured_at DESC）；dev 登录后真入库 — **Dev 已完成** `bd36333` |
+| M2-002 | 小程序 S4 称重主页（称重 tab） | P0 | 待 QA（待 devtools）| 照蓝本 home 屏：brandbar 居中 / 日期行（通知🔴）/ **今晨体重 92px Didot**（未称显"今天还没称"）/ 主按钮"开始称重"+文字链"手动记录" / 近 7 天 spark / 隐私微文案；今日摄入卡+三指标行+服务入口**先静态占位**（M3/M5 填真实）；打开即称重页；今晨体重从后端取真实 — **Dev 已完成** `e48f1b4` |
+| M2-003 | 小程序 S5 称重流程 | P0 | 待 QA（待 devtools）| 照蓝本三态：态A 蓝牙模拟连接（脉冲圆环 150px）/ 态B 读数成功（readout 62px）/ 态C 手动兜底（下划线输入带昨值）；15s 超时切态C；蓝牙**本地模拟**（真 vtble 插件 P1 后续）；断网/无蓝牙手动 20 秒完成；source(manual/photo/ble) 正确入库 — **Dev 已完成** `2646951` |
+| M2-004 | 小程序 S5b 数据对比页 | P0 | 待 QA（待 devtools）| 照蓝本：深绿 hero 三栏（历经天数/体重变化↓/脂肪变化↓ Didot）+引文+ribbon；**cmp-table 14 行年报表**（Didot 17px 等宽右对齐，昨值灰今值黑，状态标 good绿/warn）；鼓励语轮换；数值分析卡（中性解读）；合规脚注；任意两次可对比 — **Dev 已完成** `fe182ca`（ribbon SVG 略；状态标合规见回报[PM复核]）|
+| M1-010 | M1 三页按雏形对齐（补做） | P1 | 待 QA（待 devtools）| login/consent/profile-setup 用 M2-000 的 app.wxss 对齐雏形 welcome/consent/profile 视觉（直角墨绿按钮/去卡片发丝线/Didot 数字）；功能不回归；真编译过 — **Dev 已完成** `c660a6b` |
 
 **M2 完成判据**：dev 登录后走「主页 → 开始称重 →（模拟）读数 → 保存 → 14 维度对比页」全链路真实落库；**未同意健康数据则称重接口 403**（HealthConsentGuard 生效，QA 重点验，对齐 M1-008）；三屏照蓝本视觉；微信开发者工具真编译过。
 
 **M2 开发顺序**：M2-000（app.wxss 地基，前端一切基础）→ M2-001（后端 weight）→ M2-002（主页）→ M2-003（称重流程）→ M2-004（对比页）→ M1-010（顺带对齐旧三页）。
 
 **M2 依赖**：无真机（蓝牙本地模拟），dev 旁路登录后全本地可验；AI/AppSecret 无关。
+
+---
+
+### 🌅 Dev 回报 · M2 批量（2026-07-01 完成）
+
+分支 `feature/m2`（从 main 切，6 commit 全推 origin，**未碰 main**）。设计照 [03-UI蓝本.md](./03-UI蓝本.md) EDITORIAL 最终值，源值抠自 `design-reference/user-prototype.html` 三层合并后计算值。
+
+| Issue | 状态 | commit | 自验 |
+|---|---|---|---|
+| M2-000 设计系统 | 待 QA（待 devtools）| `d306dde` | 令牌+通用类落 app.wxss；括号平衡；真编译待 devtools |
+| M2-001 后端 weight | 待 QA | `bd36333` | ⭐无同意403→同意真入库→client_uuid幂等(1行值不变)→同日保留最后→14维对比+delta→latest isToday；fatty_liver 存而不展示；三source全201 |
+| M2-002 S4 主页 | 待 QA（待 devtools）| `e48f1b4` | 今晨体重/spark 取真实后端；403优雅降级；JSON/JS/wx指令/合规过 |
+| M2-003 S5 称重 | 待 QA（待 devtools）| `2646951` | 三态wx:if/elif/else；15s超时；三source入库；clientUuid防重；真编译待 devtools |
+| M2-004 S5b 对比 | 待 QA（待 devtools）| `fe182ca` | 前后端打通E2E：真实compare→14行生成+状态标精确(BMI25.2→21.6 good等)；真编译待 devtools |
+| M1-010 三页对齐 | 待 QA（待 devtools）| `c660a6b` | 无遗留类残留；处理器绑定全匹配(功能不回归)；真编译待 devtools |
+
+**M2 主线 E2E（后端全链路，真入库）**：dev-login→建档200→未同意称重**403**→同意后称重201×2→latest(58.4 today)→14维对比(Δweight -0.6/Δfat -0.6)→库清零。✅
+
+**Dev 假设（贯穿 M2，待 PM/QA 复核）**：
+1. 尺寸用 **px** 与雏形 1:1（雏形按 ~390px 手机 px 调校）；未用 rpx。
+2. mega/readout 超大数字 M2 用 serif 字体栈（Didot→宋体 fallback）；蓝本 §6 canvas 绘制优化延后。
+3. **⚠️[PM 复核合规]** S5b 状态标 good/warn 仅对 BMI/内脏脂肪/健康评分 按客观公开参考区间在**前端**渲染，中性措辞+「仅作个人记录·不构成健康评估」脚注；**后端不算任何健康评估**（守合规铁律），只返原值+中性 delta。变化列中性不上红绿。
+4. weight 模块加 `GET /me/weight/latest`（S4 今晨体重用，02 文档未列，属合理补充）。
+5. S5b hero 的 ribbon SVG、logo Didot canvas 化 M2 略（蓝本 §6 明列后续）。
+6. brandbar 主页用居中变体（蓝本 §3.5）。
+7. 前端 `config.js` `API_BASE=http://localhost:3000`+`DEV=true`（上线改 HTTPS 域名+false）。
+
+**QA 待补（Dev 环境做不了）**：微信开发者工具导入 `miniprogram/` 真编译 5 前端 Issue，走「主页→开始称重→(模拟)读数→保存→14 维对比」全链路 + 视觉照蓝本核对；后端 dev 起 `:3000`。
+
+**一句话**：M2 称重主线 6 条开发+自验完成，后端全链路真入库（含 403 守卫），前端照蓝本 EDITORIAL 还原；M1-010 顺带对齐旧三页。M1-010 后即停未越界 M3，**待 QA 批验**。
 
 ---
 
