@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MYSMIE 迈思美 · 公司后台</title>
+<style>
+/* ===== 后台 v2：常规企业后台风格（可读性优先），保留品牌绿 ===== */
+:root{--green:#0D8456;--forest:#233710;--ink:#222;--paper:#FAFAF8;--card:#fff;--line:#E5E4DE;--muted:#777;--warn:#C0392B;--amber:#B07A1F;
+--serif:"Didot",Georgia,"Songti SC",serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#F2F1EC;color:var(--ink);font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;font-size:14px;min-height:100vh}
+.btn{border:0;background:var(--forest);color:#fff;font-size:14px;padding:10px 20px;cursor:pointer;border-radius:6px}
+.btn.green{background:var(--green)}
+.btn.line{background:#fff;color:var(--ink);border:1px solid #CCC}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.warn{background:var(--warn)}
+input,select{border:1px solid #CCC;border-radius:6px;background:#fff;padding:8px 10px;font-size:14px;color:var(--ink)}
+input:focus,select:focus{outline:none;border-color:var(--green)}
+/* 登录 */
+#login{position:fixed;inset:0;background:var(--forest);display:flex;align-items:center;justify-content:center;z-index:99}
+#login .panel{width:min(360px,86vw);text-align:center;color:#F6FBEF}
+#login input{width:100%;margin-top:14px;text-align:center;background:rgba(255,255,255,.95)}
+#login .btn{background:#fff;color:var(--forest);width:100%;margin-top:24px;font-weight:600}
+/* 布局 */
+.shell{display:flex;min-height:100vh}
+.side{width:200px;background:#fff;border-right:1px solid var(--line);padding:22px 0;flex-shrink:0}
+.side .brand{padding:0 20px 18px;border-bottom:1px solid var(--line)}
+.side .brand b{font-family:var(--serif);font-size:20px;letter-spacing:.12em}
+.side .brand div{font-size:12px;color:var(--muted);margin-top:4px}
+.nav a{display:block;padding:11px 20px;font-size:14px;color:#555;cursor:pointer;border-left:3px solid transparent}
+.nav a.on{color:var(--green);font-weight:600;border-left-color:var(--green);background:#F0F6F1}
+.main{flex:1;padding:26px 30px;max-width:1180px}
+.pagehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.pagehead h1{font-size:20px;font-weight:600}
+.pagehead .sub{font-size:13px;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px}
+.kpi b{font-family:var(--serif);font-size:32px;font-weight:400;display:block;margin-top:8px}
+.kpi small{font-size:12px;color:var(--muted)}
+.kpi .lbl{font-size:13px;color:#555;font-weight:600}
+/* 表格 */
+table{width:100%;border-collapse:collapse}
+th{font-size:13px;color:#555;font-weight:600;text-align:left;padding:10px 8px;border-bottom:2px solid #DDD;background:#FAFAF6;white-space:nowrap}
+td{padding:11px 8px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle}
+tr.click{cursor:pointer}
+tr.click:hover{background:#F4F8F4}
+.num{font-variant-numeric:tabular-nums}
+.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.badge.ok{background:#E3F2E8;color:#0A6B45}
+.badge.warn{background:#FBF0DA;color:#9A6A12}
+.badge.bad{background:#FBE5E0;color:#A93226}
+.badge.off{background:#EEEEEA;color:#888}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+.dot.g{background:#1FA060}.dot.x{background:#D9D7CE}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.rrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.rrow:last-child{border-bottom:0}
+.sect-title{font-size:15px;font-weight:600;margin:4px 0 10px}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(30,30,28,.95);color:#fff;font-size:14px;padding:11px 20px;border-radius:8px;display:none;z-index:98}
+.pg{display:none}.pg.on{display:block}
+.checkbox{width:17px;height:17px;border:2px solid #BBB;display:inline-block;vertical-align:-3px;cursor:pointer;border-radius:4px}
+.checkbox.on{background:var(--green);border-color:var(--green)}
+.muted{color:var(--muted)}
+.back{cursor:pointer;font-size:14px;color:var(--green)}
+.spark{display:flex;align-items:flex-end;gap:6px;height:60px;margin-top:10px}
+.spark i{flex:1;background:#E8EDE5;border-radius:2px 2px 0 0;position:relative}
+.spark i.hl{background:var(--green)}
+.tabs{display:flex;gap:4px;border-bottom:2px solid #DDD;margin-bottom:14px;overflow-x:auto}
+.tabs a{padding:9px 16px;font-size:14px;color:#666;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tabs a.on{color:var(--green);font-weight:600;border-bottom-color:var(--green)}
+.bar{height:18px;background:#E8EDE5;border-radius:4px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--green)}
+.alert-card{border-left:4px solid var(--amber);background:#FFFDF6}
+.alert-card.high{border-left-color:var(--warn);background:#FFF8F6}
+@media(max-width:760px){
+  .shell{flex-direction:column}
+  .side{width:100%;padding:12px 0 0}
+  .side .brand{padding:0 16px 10px;border-bottom:0}
+  .nav{display:flex;overflow-x:auto;border-top:1px solid var(--line);background:#fff}
+  .nav a{white-space:nowrap;border-left:0;border-bottom:3px solid transparent;padding:11px 13px}
+  .nav a.on{border-bottom-color:var(--green);background:transparent}
+  .main{padding:16px 12px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .hide-m{display:none}
+  .main{overflow-x:hidden}
+  .card{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="panel">
+    <div style="font-family:var(--serif);font-size:34px;letter-spacing:.18em">MYSMIE</div>
+    <div style="font-size:13px;opacity:.8;margin-top:8px">迈思美 · 公司后台</div>
+    <input type="text" placeholder="账号（演示随意输入）">
+    <input type="password" placeholder="密码">
+    <button class="btn" onclick="doLogin()">登 录</button>
+    <p style="font-size:12px;opacity:.6;margin-top:16px">演示环境 · 数据为模拟 · 正式版接企业账号体系</p>
+  </div>
+</div>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><b>MYSMIE</b><div>迈思美 · 公司后台</div></div>
+    <nav class="nav" id="nav">
+      <a class="on" data-p="dash" onclick="nav('dash')">总览</a>
+      <a data-p="checkin" onclick="nav('checkin')">今日打卡</a>
+      <a data-p="daily" onclick="nav('daily')">日报汇总</a>
+      <a data-p="camps" onclick="nav('camps')">营期管理</a>
+      <a data-p="users" onclick="nav('users')">用户管理</a>
+      <a data-p="alerts" onclick="nav('alerts')">警示中心 <span id="alertN" class="badge bad" style="padding:1px 7px">3</span></a>
+      <a data-p="remind" onclick="nav('remind')">提醒中心</a>
+      <a data-p="ana" onclick="nav('ana')">营期分析</a>
+      <a data-p="shares" onclick="nav('shares')">共享与记录</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <!-- ① 总览 -->
+    <section class="pg on" id="pg-dash">
+      <div class="pagehead"><h1>今日总览</h1><span class="sub" id="dashDate"></span></div>
+      <div class="kpis">
+        <div class="kpi"><span class="lbl">在营用户</span><b>12</b><small>21 天轻体伙伴营 · 第 6 期</small></div>
+        <div class="kpi"><span class="lbl">今日已称重</span><b class="num">9<small style="font-size:15px;color:#999">/12</small></b><small>完成率 75%</small></div>
+        <div class="kpi"><span class="lbl">今日已记录餐食</span><b class="num">8<small style="font-size:15px;color:#999">/12</small></b><small>≥1 餐</small></div>
+        <div class="kpi"><span class="lbl">完整打卡</span><b class="num">7<small style="font-size:15px;color:#999">/12</small></b><small>称重+餐食均完成</small></div>
+        <div class="kpi"><span class="lbl">待处理警示</span><b style="color:var(--warn)">3</b><small><a onclick="nav('alerts')" style="color:var(--green);cursor:pointer">去处理 ›</a></small></div>
+      </div>
+      <div class="card">
+        <div class="sect-title">未打卡名单（截至当前）</div>
+        <div class="rrow"><span><span class="dot x"></span>吴女士 · 刘老师 · 连续 2 天未记录</span><button class="btn sm green" onclick="quickRemind('吴女士')">提醒</button></div>
+        <div class="rrow"><span><span class="dot x"></span>赵女士 · 陈顾问 · 今日未称重</span><button class="btn sm green" onclick="quickRemind('赵女士')">提醒</button></div>
+        <div class="rrow"><span><span class="dot x"></span>孙女士 · 刘老师 · 今日未记录餐食</span><button class="btn sm green" onclick="quickRemind('孙女士')">提醒</button></div>
+      </div>
+      <div class="card">
+        <div class="sect-title">最近动态</div>
+        <div class="rrow"><span>李女士 完成晨起称重 58.4 kg（蓝牙）</span><span class="muted">07:42</span></div>
+        <div class="rrow"><span>王女士 提交健康调研表</span><span class="muted">07:31</span></div>
+        <div class="rrow"><span>张老师 给 李女士 写「老师的话」</span><span class="muted">07:05</span></div>
+        <div class="rrow"><span>陈女士 上传阶段记录（体型照 / 围度）</span><span class="muted">06:58</span></div>
+      </div>
+    </section>
+
+    <!-- ② 今日打卡总表 -->
+    <section class="pg" id="pg-checkin">
+      <div class="pagehead"><h1>打卡总表</h1>
+        <span><select id="ciDay" onchange="renderCheckin()"><option value="0">今天 06-12</option><option value="1">昨天 06-11</option></select>
+        <label style="margin-left:14px;font-size:13px"><span class="checkbox" id="ciMiss" onclick="this.classList.toggle('on');renderCheckin()"></span> 只看未完成</label>
+        <button class="btn sm line" style="margin-left:14px" onclick="exportCSV('checkin')">导出 CSV</button></span></div>
+      <div class="card" style="padding:10px 14px">
+        <table><thead><tr><th>用户</th><th>老师</th><th>晨重</th><th>早餐</th><th>午餐</th><th>晚餐</th><th class="hide-m">饮水</th><th class="hide-m">排便</th><th>完成度</th><th>操作</th></tr></thead>
+        <tbody id="ciBody"></tbody></table>
+      </div>
+      <p class="muted" style="font-size:13px">点击用户名进入完整档案；✓ 可点开查看打卡内容（餐食照片与 AI 解析）。</p>
+    </section>
+
+    <!-- ③ 日报汇总 -->
+    <section class="pg" id="pg-daily">
+      <div class="pagehead"><h1>日报汇总</h1>
+        <span><select id="dailyDay" onchange="renderDaily()"><option value="0">2026-06-12</option><option value="1">2026-06-11</option></select>
+        <button class="btn sm line" style="margin-left:12px" onclick="exportCSV('daily')">导出日报 CSV</button></span></div>
+      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi"><span class="lbl">称重完成</span><b class="num" id="dWeighRate">75%</b><small id="dWeighN">9/12 人</small></div>
+        <div class="kpi"><span class="lbl">餐食记录</span><b class="num" id="dMealRate">67%</b><small id="dMealN">8/12 人</small></div>
+        <div class="kpi"><span class="lbl">平均摄入</span><b class="num">1,180<small style="font-size:14px;color:#999"> kcal</small></b><small>已记录用户均值 · 估算</small></div>
+        <div class="kpi"><span class="lbl">体重较昨日</span><b class="num" style="color:var(--green)">−0.18<small style="font-size:14px;color:#999"> kg</small></b><small>在营均值</small></div>
+      </div>
+      <div class="card">
+        <div class="sect-title">今日亮点</div>
+        <div class="rrow"><span>🟢 连续 4 天完整打卡</span><b>李女士、陈女士、周女士 等 5 人</b></div>
+        <div class="rrow"><span>🟢 211 餐盘全达标</span><b>4 人</b></div>
+        <div class="rrow"><span>🟢 腰臀比回到标准区间</span><b>李女士</b></div>
+      </div>
+      <div class="card alert-card">
+        <div class="sect-title">需要关注</div>
+        <div class="rrow"><span>连续 2 天未记录</span><b>吴女士（刘老师）</b></div>
+        <div class="rrow"><span>体重单日波动 &gt; 1kg（可能为水分/经期）</span><b>赵女士（陈顾问）</b></div>
+        <div class="rrow"><span>调研表超 48h 未填</span><b>孙女士（刘老师）</b></div>
+      </div>
+      <div class="card">
+        <div class="sect-title">老师服务情况（服务质量口径，不作计酬依据）</div>
+        <table><thead><tr><th>老师</th><th>服务人数</th><th>今日已跟进</th><th>「老师的话」条数</th><th>掉队挽回</th></tr></thead>
+        <tbody>
+          <tr><td>张老师</td><td class="num">5</td><td class="num">5</td><td class="num">4</td><td class="num">1</td></tr>
+          <tr><td>陈顾问</td><td class="num">4</td><td class="num">3</td><td class="num">2</td><td class="num">0</td></tr>
+          <tr><td>刘老师</td><td class="num">3</td><td class="num">1</td><td class="num">1</td><td class="num">0</td></tr>
+        </tbody></table>
+      </div>
+    </section>
+
+    <!-- ③·B 营期管理 -->
+    <section class="pg" id="pg-camps">
+      <div class="pagehead"><h1>营期管理</h1><span class="sub">发起活动 · 圈人建营 · 数据监控</span></div>
+      <div class="card">
+        <div class="sect-title">创建新打卡营</div>
+        <div class="toolbar">
+          <input type="text" id="campName" placeholder="营期名称，如：7 月轻体冲刺营" style="width:240px">
+          <select id="campDays"><option>21 天</option><option>28 天</option><option>14 天（体验）</option></select>
+          <select id="campWho"><option>圈人：全部活跃用户（12）</option><option>圈人：上期完成率 ≥70%（8）</option><option>圈人：手动勾选…</option></select>
+          <button class="btn green" onclick="createCamp()">创建并发送邀请</button>
+        </div>
+        <p class="muted" style="font-size:13px">创建后自动向圈选用户发送「弹窗邀请」，接受即入营；老师同步收到名单。</p>
+      </div>
+      <div class="card">
+        <div class="sect-title">营期列表</div>
+        <table><thead><tr><th>营期</th><th>周期</th><th>人数</th><th>状态</th><th></th></tr></thead><tbody id="campBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ③·C 营期详情 · 减脂数据监控 -->
+    <section class="pg" id="pg-campDetail">
+      <div class="pagehead"><h1>21 天轻体伙伴营 · 第 6 期</h1><span class="back" onclick="nav('camps')">‹ 返回营期列表</span></div>
+      <div class="kpis">
+        <div class="kpi"><span class="lbl">在营 / 天数</span><b class="num">12<small style="font-size:15px;color:#999"> 人</small></b><small>第 4 / 21 天</small></div>
+        <div class="kpi"><span class="lbl">平均减重</span><b class="num" style="color:var(--green)">−1.21<small style="font-size:14px;color:#999"> kg</small></b><small>开营至今</small></div>
+        <div class="kpi"><span class="lbl">累计减脂肪</span><b class="num" style="color:var(--green)">−9.8<small style="font-size:14px;color:#999"> kg</small></b><small>全营合计（秤端体脂换算）</small></div>
+        <div class="kpi"><span class="lbl">今日完整打卡</span><b class="num">7<small style="font-size:15px;color:#999">/12</small></b><small>称重+餐食</small></div>
+        <div class="kpi"><span class="lbl">风险人员</span><b style="color:var(--warn)">5</b><small>缺卡/掉肌肉/平台期</small></div>
+      </div>
+      <div class="card">
+        <div class="sect-title">减重质量拆解（这一营减下来的到底是什么）</div>
+        <div class="rrow"><span>脂肪 <b style="color:var(--green)">−9.8 kg（77%）</b></span><div class="bar" style="margin:0 12px"><i style="width:77%"></i></div><span class="badge ok">健康主体 ✓</span></div>
+        <div class="rrow"><span>水分波动 −2.0 kg（16%）</span><div class="bar" style="margin:0 12px"><i style="width:16%;background:#7FA8C9"></i></div><span class="badge off">正常</span></div>
+        <div class="rrow"><span>肌肉 −0.9 kg（7%）</span><div class="bar" style="margin:0 12px"><i style="width:7%;background:var(--amber)"></i></div><span class="badge warn">关注</span></div>
+        <p class="muted" style="font-size:13px;margin-top:10px">减重质量好 = 减脂肪、守肌肉、水分自然波动。<b>肌肉流失占比 &gt;15% 的个体见下方风险表</b>（通常是蛋白吃不够——211 的"1 份蛋白"没落实）。</p>
+      </div>
+      <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi"><span class="lbl">内脏脂肪改善</span><b class="num">6<small style="font-size:15px;color:#999"> 人下降</small></b><small>平均 −0.7 级</small></div>
+        <div class="kpi"><span class="lbl">基础代谢守护</span><b class="num">10<small style="font-size:15px;color:#999">/12 稳定</small></b><small>下降&gt;5% 预警 2 人</small></div>
+        <div class="kpi"><span class="lbl">腰臀比回标准</span><b class="num">3<small style="font-size:15px;color:#999"> 人</small></b><small>女性 &lt; 0.85</small></div>
+        <div class="kpi"><span class="lbl">平台期识别</span><b class="num" style="color:var(--amber)">2<small style="font-size:15px;color:#999"> 人</small></b><small>连续 5 天横盘</small></div>
+      </div>
+      <div class="card">
+        <div class="sect-title">个体风险与建议动作（点提醒即触达本人与其老师）</div>
+        <table><thead><tr><th>用户</th><th>风险类型</th><th>数据依据</th><th>建议动作</th><th></th></tr></thead><tbody>
+          <tr><td>吴女士</td><td><span class="badge bad">连续 2 天缺卡</span></td><td class="muted">06-11 起无记录</td><td>老师私聊关怀 + 群内点名鼓励</td><td><button class="btn sm green" onclick="quickRemind('吴女士')">提醒</button></td></tr>
+          <tr><td>赵女士</td><td><span class="badge warn">肌肉流失偏高</span></td><td class="muted">肌肉 −0.6kg / 脂肪 −0.4kg</td><td>提醒补足"1 份蛋白"，老师跟进餐单</td><td><button class="btn sm green" onclick="quickRemind('赵女士')">提醒</button></td></tr>
+          <tr><td>褚女士</td><td><span class="badge warn">平台期（5 天横盘）</span></td><td class="muted">68.5→68.3→68.4…</td><td>按平台期 SOP 安抚（正常节奏）+ 加蛋白与粗粮</td><td><button class="btn sm green" onclick="quickRemind('褚女士')">提醒</button></td></tr>
+          <tr><td>孙女士</td><td><span class="badge warn">代谢下降 6%</span></td><td class="muted">1364→1282 kcal</td><td>排查是否吃太少——不鼓励节食，回到 211</td><td><button class="btn sm green" onclick="quickRemind('孙女士')">提醒</button></td></tr>
+          <tr><td>冯女士</td><td><span class="badge warn">体重单日 +1.2kg</span></td><td class="muted">经期/水分常见</td><td>老师关怀确认，无需焦虑</td><td><button class="btn sm green" onclick="quickRemind('冯女士')">提醒</button></td></tr>
+        </tbody></table>
+        <p class="muted" style="font-size:12px;margin-top:10px">分析口径：内部运营参考（秤端数据换算），不向用户输出医疗结论；缺卡用户的<b>服务老师会同步收到系统提醒</b>（服务端横幅+通知）。</p>
+      </div>
+    </section>
+
+    <!-- ④ 用户管理 -->
+    <section class="pg" id="pg-users">
+      <div class="pagehead"><h1>用户管理</h1><span class="sub">点击行进入完整档案 · 共 <span id="uCount"></span> 人</span></div>
+      <div class="toolbar">
+        <input type="text" placeholder="搜索姓名 / 手机号" style="width:220px" oninput="renderUsers(this.value)">
+        <select onchange="renderUsers('',this.value)"><option value="">全部老师</option><option>张老师</option><option>陈顾问</option><option>刘老师</option></select>
+        <button class="btn sm line" onclick="exportCSV('users')">导出 CSV</button>
+      </div>
+      <div class="card" style="padding:10px 14px">
+        <table><thead><tr><th>用户</th><th>老师</th><th>今晨体重</th><th>今日记录</th><th class="hide-m">健康调研</th><th class="hide-m">连续打卡</th><th>状态</th></tr></thead><tbody id="uBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ⑤ 用户 360° 档案 -->
+    <section class="pg" id="pg-detail">
+      <div class="pagehead"><h1 id="dName">—</h1><span class="back" onclick="nav('users')">‹ 返回列表</span></div>
+      <div class="tabs" id="dTabs">
+        <a class="on" data-t="t-over" onclick="dtab('t-over')">概况</a>
+        <a data-t="t-checkin" onclick="dtab('t-checkin')">打卡记录</a>
+        <a data-t="t-survey" onclick="dtab('t-survey')">健康调研</a>
+        <a data-t="t-stage" onclick="dtab('t-stage')">阶段记录</a>
+        <a data-t="t-notes" onclick="dtab('t-notes')">老师备注</a>
+        <a data-t="t-ops" onclick="dtab('t-ops')">归属与操作</a>
+      </div>
+      <div class="dt on" id="t-over">
+        <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+          <div class="kpi"><span class="lbl">今晨体重</span><b class="num" id="dW">—</b><small id="dWd">较昨日</small></div>
+          <div class="kpi"><span class="lbl">累计变化</span><b class="num" style="color:var(--green)">−1.6 kg</b><small>14 天 · 60.0 → 58.4</small></div>
+          <div class="kpi"><span class="lbl">今日摄入</span><b class="num" id="dK">—</b><small>估算</small></div>
+          <div class="kpi"><span class="lbl">连续打卡</span><b class="num" id="dStreak">—</b><small>天</small></div>
+        </div>
+        <div class="card"><div class="sect-title">体重趋势（近 7 天）</div><div class="spark" id="dSpark"></div></div>
+        <div class="card"><div class="sect-title">基本信息</div>
+          <div class="rrow"><span>手机号</span><b id="dPhone">—</b></div>
+          <div class="rrow"><span>性别 / 年龄 / 身高</span><b>女 · 39 · 160cm</b></div>
+          <div class="rrow"><span>目标体重</span><b>52.0 kg</b></div>
+          <div class="rrow"><span>营期</span><b>21 天轻体伙伴营 · 第 6 期（第 4 天）</b></div>
+          <div class="rrow"><span>九洲福会员</span><b>是（离线名单比对命中）</b></div>
+        </div>
+      </div>
+      <div class="dt" id="t-checkin" style="display:none">
+        <div class="card"><div class="sect-title">打卡日历（近 14 天）</div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px" id="dCal"></div>
+          <p class="muted" style="font-size:12px;margin-top:8px">绿＝完整 · 浅绿＝部分 · 灰＝未记录</p></div>
+        <div class="card"><div class="sect-title" id="dayTitle">当日打卡内容 · 06-12</div><div id="dayBox"></div>
+          <p class="muted" style="font-size:12px;margin-top:8px">点上方日历任意一格调取那一天的留档记录；点任一餐直接在线看原图（导出仅用于统一分析）。</p></div>
+      </div>
+      <div class="dt" id="t-survey" style="display:none">
+        <div class="card"><div class="sect-title">健康调研表（已完成 · 06-10）</div>
+          <div class="rrow"><span>目标</span><b>目标 52kg · 最想改善：肚腩、腰围 · 节奏：跟着身体</b></div>
+          <div class="rrow"><span>代谢指标</span><b>血糖偏高</b></div>
+          <div class="rrow"><span>甲状腺</span><b>结节</b></div>
+          <div class="rrow"><span>肠胃消化</span><b>胀气、胃炎</b></div>
+          <div class="rrow"><span>妇科</span><b>痛经、乳腺增生</b></div>
+          <div class="rrow"><span>症状</span><b>易掉发、色斑、手脚冰凉、睡眠质量差</b></div>
+          <div class="rrow"><span>生活习惯</span><b>23–24 点睡 · 饮水约 1000ml · 排便一天一次</b></div>
+          <div class="rrow"><span>诱因 / 烟酒</span><b>产后、熬夜 · 不吸烟 · 偶尔饮酒</b></div>
+          <p class="muted" style="font-size:12px;margin-top:8px">⚠️ 健康敏感信息：仅公司与被授权服务者可见，本表不作医疗诊断依据。</p></div>
+      </div>
+      <div class="dt" id="t-stage" style="display:none">
+        <div class="card"><div class="sect-title">阶段对比（05-29 基线 → 06-11）</div>
+          <div class="rrow"><span>腰围</span><b>78.0 → 74.0 cm（↓4.0）</b></div>
+          <div class="rrow"><span>臀围</span><b>96.0 → 94.0 cm（↓2.0）</b></div>
+          <div class="rrow"><span>腰臀比</span><b>0.81 → 0.79（标准 ✓）</b></div>
+          <div class="rrow"><span>体型照</span><b><span class="back" onclick="toast('查看对比大图（演示）')">查看对比</span></b></div>
+          <div class="rrow"><span>生化报告</span><b>05-29 一份 · <span class="back" onclick="toast('查看报告（演示）— 系统不做医疗解读')">查看</span></b></div>
+          <div class="rrow"><span>舌诊照</span><b>05-29 / 06-11 各一张 · <span class="back" onclick="toast('对比查看（演示）')">对比</span></b></div></div>
+      </div>
+      <div class="dt" id="t-notes" style="display:none">
+        <div class="card"><div class="sect-title">老师备注与「老师的话」</div>
+          <div class="rrow"><span>06-12 张老师 ·「老师的话」（用户可见）</span><b class="muted" style="font-weight:400">今天三餐很标准，节奏保持住</b></div>
+          <div class="rrow"><span>06-11 张老师 · 团队备注（内部）</span><b class="muted" style="font-weight:400">本周经期，体重波动属正常，别催</b></div>
+          <div class="rrow"><span>06-11 张老师 · 阶段分析</span><b class="muted" style="font-weight:400">腰围下降明显，腰臀比回标准</b></div></div>
+      </div>
+      <div class="dt" id="t-ops" style="display:none">
+        <div class="card"><div class="sect-title">服务老师（归属）</div>
+          <div style="display:flex;gap:10px;align-items:center"><select id="dAdvisor"><option>张老师</option><option>陈顾问</option><option>刘老师</option></select>
+          <button class="btn sm" onclick="changeAdvisor()">改派</button></div>
+          <p class="muted" style="font-size:13px;margin-top:10px" id="dAdvisorLog">归属日志：06-08 系统分配 → 张老师</p></div>
+        <div class="card"><div class="sect-title">共享关系</div>
+          <div class="rrow"><span>张老师（用户邀请 · 06-08）</span><b class="back" onclick="toast('已解除（演示）· 留痕')">解除</b></div>
+          <div class="rrow"><span>陈顾问（公司指派 · 06-09）</span><b class="back" onclick="toast('已解除（演示）· 留痕')">解除</b></div></div>
+        <div class="card"><div class="sect-title">快捷动作</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn sm green" onclick="sendTo(currentUser,'camp')">发送新营邀请</button>
+            <button class="btn sm green" onclick="sendTo(currentUser,'survey')">提醒填写调研</button>
+            <button class="btn sm line" onclick="exportCSV('user1')">导出 TA 的记录 CSV</button>
+            <button class="btn sm line" onclick="toast('已创建异步导出任务（演示）：打包 TA 全部餐食图为 ZIP · 完成后生成 24 小时有效下载链接 · 已写审计')">导出 TA 的餐食图 ZIP</button>
+          </div></div>
+      </div>
+    </section>
+
+    <!-- ⑥ 警示中心 -->
+    <section class="pg" id="pg-alerts">
+      <div class="pagehead"><h1>警示中心</h1><span class="sub">规则自动触发 · 处理留痕</span></div>
+      <div id="alertList"></div>
+      <div class="card">
+        <div class="sect-title">警示规则（可配置）</div>
+        <div class="rrow"><span>连续 2 天未记录</span><b>中级 · 通知老师</b></div>
+        <div class="rrow"><span>连续 4 天未记录</span><b>高级 · 公司介入</b></div>
+        <div class="rrow"><span>体重单日波动 &gt; 1kg</span><b>中级 · 老师关怀（经期/水分常见）</b></div>
+        <div class="rrow"><span>调研表超 48 小时未填</span><b>低级 · 自动提醒</b></div>
+      </div>
+    </section>
+
+    <!-- ⑦ 提醒中心 -->
+    <section class="pg" id="pg-remind">
+      <div class="pagehead"><h1>提醒中心</h1><span class="sub">用户打开小程序时弹窗 · 同类每人每日 ≤1 条</span></div>
+      <div class="card">
+        <div class="sect-title">第一步 · 圈选用户</div>
+        <table><thead><tr><th style="width:36px"></th><th>用户</th><th>上一期</th><th>老师</th><th class="hide-m">状态</th></tr></thead><tbody id="rBody"></tbody></table>
+      </div>
+      <div class="card">
+        <div class="sect-title">第二步 · 选择提醒</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" onclick="sendBatch('camp')">发送「新一期伙伴营邀请」</button>
+          <button class="btn green" onclick="sendBatch('survey')">发送「健康调研提醒」</button>
+        </div>
+        <p class="muted" style="font-size:13px;margin-top:12px">勾选「演示用户（你）」发送后，在<b>同一部手机/浏览器</b>打开用户端将真实弹出提醒——完整的「后台发送 → 用户确认 → 回传」链路。</p>
+      </div>
+    </section>
+
+    <!-- ⑧ 营期分析 -->
+    <section class="pg" id="pg-ana">
+      <div class="pagehead"><h1>营期分析</h1><span class="sub">21 天轻体伙伴营 · 第 6 期 · 第 4 天</span></div>
+      <div class="card"><div class="sect-title">每日完整打卡率（开营至今）</div>
+        <div class="spark" style="height:90px">
+          <i style="height:92%"><span style="position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;color:#777">92%</span></i>
+          <i style="height:84%"><span style="position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;color:#777">84%</span></i>
+          <i style="height:79%"><span style="position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;color:#777">79%</span></i>
+          <i class="hl" style="height:58%"><span style="position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;color:#777">58%*</span></i>
+        </div>
+        <p class="muted" style="font-size:12px;margin-top:8px">06-09 / 06-10 / 06-11 / 06-12（*今日进行中）。开营初期高、第 3–5 天回落属常见节奏——正是提醒与老师跟进的发力点。</p></div>
+      <div class="card"><div class="sect-title">体重变化分布（累计）</div>
+        <div class="rrow"><span>下降 ≥1kg</span><div class="bar" style="margin:0 12px"><i style="width:42%"></i></div><b class="num">5 人</b></div>
+        <div class="rrow"><span>下降 0–1kg</span><div class="bar" style="margin:0 12px"><i style="width:33%"></i></div><b class="num">4 人</b></div>
+        <div class="rrow"><span>持平/波动</span><div class="bar" style="margin:0 12px"><i style="width:25%"></i></div><b class="num">3 人</b></div></div>
+      <div class="card"><div class="sect-title">211 餐盘达标率</div>
+        <div class="rrow"><span>三餐全达标</span><b class="num">33%</b></div>
+        <div class="rrow"><span>最常缺的一项</span><b>第 2 份蔬菜（61% 的未达标餐缺它）</b></div>
+        <div class="rrow"><span>平均每餐摄入</span><b class="num">≈ 405 kcal</b></div></div>
+      <div class="card"><div class="sect-title">减重质量指数 FQI（脂肪占总减重比，秤端体脂换算）</div>
+        <div class="rrow"><span><span class="badge ok">优 ≥70%</span> 减的主要是脂肪</span><b class="num">6 人</b></div>
+        <div class="rrow"><span><span class="badge warn">良 40–70%</span> 水分占比偏高</span><b class="num">4 人</b></div>
+        <div class="rrow"><span><span class="badge bad">预警 &lt;40% 或肌肉流失&gt;30%</span></span><b>赵女士、孙女士 → 推「补足 1 份蛋白」提醒</b></div></div>
+      <div class="card"><div class="sect-title">依从 × 效果 四象限（打卡完成率 × FQI）</div>
+        <table><thead><tr><th></th><th>效果好</th><th>效果慢</th></tr></thead><tbody>
+        <tr><td><b>依从高</b></td><td><span class="badge ok">标杆 5 人</span> → 群内示范、结营案例（需本人书面授权）</td><td><span class="badge warn">排查 2 人</span> → 查经期/平台期/代谢，转老师一对一</td></tr>
+        <tr><td><b>依从低</b></td><td><span class="badge warn">侥幸 1 人</span> → 先补打卡习惯，防反弹</td><td><span class="badge bad">流失风险 2 人</span> → 48h 内老师电话/私聊介入</td></tr>
+        </tbody></table></div>
+      <div class="card"><div class="sect-title">饮食结构画像（AI 解析条目聚合）</div>
+        <div class="rrow"><span>最常缺的 211 要素</span><b>第 2 份蔬菜（61% 未达标餐缺它）→ 本周群课主题</b></div>
+        <div class="rrow"><span>晚餐过重（&gt;40% 日摄入）</span><b class="num">3 人 → 推「晚餐轻一点」模板</b></div>
+        <div class="rrow"><span>油炸/甜食出现频次</span><b class="num">周均 1.8 次/人 · 趋势 ↓</b></div></div>
+      <p class="muted" style="font-size:12px">分析为运营参考口径；不输出个体健康结论，不作老师计酬依据。完整模型库（含公式与阈值）见规则库文档第九节。</p>
+    </section>
+
+    <!-- ⑨ 共享与记录 -->
+    <section class="pg" id="pg-shares">
+      <div class="pagehead"><h1>共享与发送记录</h1><span class="sub">谁在看谁的数据 · 提醒触达状态 · 全程留痕</span></div>
+      <div class="card"><div class="sect-title">共享关系</div>
+        <table><thead><tr><th>用户</th><th>服务者</th><th>来源</th><th>建立时间</th><th></th></tr></thead><tbody id="sBody"></tbody></table></div>
+      <div class="card"><div class="sect-title">发送记录</div>
+        <table><thead><tr><th>时间</th><th>用户</th><th>类型</th><th>状态</th></tr></thead><tbody id="lBody"></tbody></table></div>
+    </section>
+  </main>
+</div>
+<div id="imgModal" style="display:none;position:fixed;inset:0;background:rgba(20,20,18,.55);z-index:97;align-items:center;justify-content:center" onclick="this.style.display='none'">
+  <div style="background:#fff;border-radius:12px;max-width:540px;width:92vw;padding:20px" onclick="event.stopPropagation()">
+    <div class="sect-title" id="imTitle">餐食</div>
+    <div style="aspect-ratio:4/3;background:#F1EFE5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;text-align:center">学员上传的餐食原图<br>（演示占位 · 正式版此处即原图，在线直接查看）</div>
+    <p style="font-size:14px;margin-top:12px;font-weight:600" id="imDesc"></p>
+    <p class="muted" style="font-size:13px;margin-top:4px" id="imAI"></p>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn sm green" onclick="toast('已下载这张原图（演示）· 写入下载审计')">下载这张</button>
+      <button class="btn sm line" onclick="document.getElementById('imgModal').style.display='none'">关闭</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',2400)}
+function doLogin(){$('login').style.display='none';toast('欢迎回来 · 迈思美公司后台（演示）')}
+function nav(p){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));$('pg-'+p).classList.add('on');
+document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p));window.scrollTo(0,0)}
+function dtab(t){document.querySelectorAll('.dt').forEach(x=>x.style.display='none');$(t).style.display='block';
+document.querySelectorAll('#dTabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===t))}
+
+/* ===== 演示数据（12 人）+ 本机真实联动 ===== */
+const USERS=[
+ {n:'演示用户（你）',real:true,adv:'张老师',last:'新用户',w:null,meals:[0,0,0],water:0,bowel:0,survey:null,streak:1,status:'ok'},
+ {n:'李女士',ph:'138****0001',adv:'张老师',last:'19/21',w:58.4,meals:[340,480,390],water:6,bowel:1,sleep:7,ct:'06:42',score:95,survey:'已完成',streak:4,status:'ok'},
+ {n:'王女士',ph:'139****0002',adv:'张老师',last:'15/21',w:62.1,meals:[310,0,0],water:3,bowel:1,survey:'已完成',streak:2,status:'ok'},
+ {n:'陈女士',ph:'137****0003',adv:'陈顾问',last:'21/21',w:63.2,meals:[360,420,0],water:5,bowel:1,survey:'已完成',streak:4,status:'ok'},
+ {n:'赵女士',ph:'136****0004',adv:'陈顾问',last:'12/21',w:70.1,meals:[420,510,460],water:4,bowel:0,survey:'未完成',streak:1,status:'watch'},
+ {n:'周女士',ph:'135****0005',adv:'刘老师',last:'18/21',w:55.8,meals:[300,380,350],water:7,bowel:1,survey:'已完成',streak:4,status:'ok'},
+ {n:'吴女士',ph:'133****0006',adv:'刘老师',last:'9/21',w:null,meals:[0,0,0],water:0,bowel:0,survey:'未完成',streak:0,status:'risk'},
+ {n:'郑女士',ph:'132****0007',adv:'张老师',last:'17/21',w:59.6,meals:[330,450,0],water:5,bowel:1,survey:'已完成',streak:3,status:'ok'},
+ {n:'孙女士',ph:'131****0008',adv:'刘老师',last:'14/21',w:66.4,meals:[0,0,0],water:2,bowel:0,survey:'未完成',streak:0,status:'watch'},
+ {n:'钱女士',ph:'130****0009',adv:'张老师',last:'20/21',w:53.9,meals:[290,360,330],water:6,bowel:1,survey:'已完成',streak:4,status:'ok'},
+ {n:'冯女士',ph:'139****0010',adv:'陈顾问',last:'16/21',w:61.7,meals:[350,0,410],water:5,bowel:1,survey:'已完成',streak:2,status:'ok'},
+ {n:'褚女士',ph:'138****0011',adv:'张老师',last:'13/21',w:68.3,meals:[380,440,0],water:4,bowel:1,survey:'已完成',streak:1,status:'ok'},
+];
+function realState(){try{return JSON.parse(localStorage.getItem('msm5'))||null}catch(e){return null}}
+function hydrate(){const r=realState();const u=USERS[0];if(r){u.w=r.weight||null;
+ const ks=Object.values(r.meals||{}).filter(Boolean).map(m=>m.kcal);u.meals=[ks[0]||0,ks[1]||0,ks[2]||0];
+ u.water=r.water||0;u.bowel=r.bowel||0;u.survey=r.surveyDone?'已完成':'未完成'}}
+let currentUser=null;
+
+/* 打卡总表 */
+function renderCheckin(){hydrate();const onlyMiss=$('ciMiss').classList.contains('on');const tb=$('ciBody');tb.innerHTML='';
+ USERS.forEach(u=>{
+  const done=(u.w?1:0)+(u.meals.filter(Boolean).length>=1?1:0);
+  const full=u.w&&u.meals.filter(Boolean).length>=3;
+  const pct=Math.round(((u.w?1:0)*40+(u.meals.filter(Boolean).length/3)*60));
+  if(onlyMiss&&full)return;
+  tb.innerHTML+=`<tr><td><a class="back" onclick="openDetail('${u.n}')">${u.n}</a>${u.real?' <span class="badge ok">本机</span>':''}</td>
+   <td>${u.adv}</td>
+   <td>${u.w?`<span class="badge ok num">${u.w} kg</span>`:'<span class="badge off">未称</span>'}</td>
+   ${u.meals.map((k,mi)=>k?`<td><span class="badge ok num" title="点击看图与解析" style="cursor:pointer" onclick="openMealImg('${u.n}',${mi},${k})">≈${k}</span></td>`:'<td><span class="badge off">—</span></td>').join('')}
+   <td class="hide-m num">${u.water||0} 杯</td><td class="hide-m num">${u.bowel||0} 次</td>
+   <td><div class="bar" style="max-width:90px"><i style="width:${pct}%"></i></div></td>
+   <td>${full?'<span class="badge ok">完整</span>':`<button class="btn sm green" onclick="quickRemind('${u.n}')">提醒</button>`}</td></tr>`});
+}
+function quickRemind(n){const u=USERS.find(x=>x.n===n);doSend(u||{n},'checkin');renderLogs();toast('已提醒 '+n+'（打开小程序时弹窗）')}
+
+/* 日报 */
+function renderDaily(){/* 演示静态，切日期时轻微变化 */
+ const d=$('dailyDay').value==='1';
+ $('dWeighRate').textContent=d?'83%':'75%';$('dWeighN').textContent=d?'10/12 人':'9/12 人';
+ $('dMealRate').textContent=d?'75%':'67%';$('dMealN').textContent=d?'9/12 人':'8/12 人';}
+
+/* 用户管理 */
+function renderUsers(q='',adv=''){hydrate();const tb=$('uBody');tb.innerHTML='';
+ USERS.filter(u=>(!q||u.n.includes(q)||(u.ph||'').includes(q))&&(!adv||u.adv===adv)).forEach(u=>{
+  const mealN=u.meals.filter(Boolean).length;
+  tb.innerHTML+=`<tr class="click" onclick="openDetail('${u.n}')"><td><b>${u.n}</b> <span class="muted" style="font-size:12px">${u.ph||''}</span>${u.real?' <span class="badge ok">本机真实数据</span>':''}</td>
+  <td>${u.adv}</td><td class="num">${u.w?u.w+' kg':'<span class=muted>未称</span>'}</td>
+  <td>${mealN?`<span class="badge ok">${mealN} 餐</span>`:'<span class="badge off">未记录</span>'}</td>
+  <td class="hide-m">${u.survey==='已完成'?'<span class="badge ok">已完成</span>':'<span class="badge warn">未完成</span>'}</td>
+  <td class="hide-m num">${u.streak} 天</td>
+  <td>${u.status==='risk'?'<span class="badge bad">连续未记录</span>':u.status==='watch'?'<span class="badge warn">需关注</span>':'<span class="badge ok">正常</span>'}</td></tr>`});
+ $('uCount').textContent=USERS.length}
+function openDetail(n){const u=USERS.find(x=>x.n===n);if(!u)return;currentUser=u;nav('detail');dtab('t-over');
+ $('dName').textContent=u.n+' · 完整档案';
+ $('dW').textContent=u.w?u.w+' kg':'未称';$('dWd').textContent='较昨日 −0.2 kg';
+ const k=u.meals.reduce((a,b)=>a+b,0);$('dK').textContent=k?'≈'+k+' kcal':'未记录';
+ $('dStreak').textContent=u.streak;$('dPhone').textContent=u.ph||'（本机演示）';
+ $('dAdvisor').value=u.adv;$('dAdvisorLog').textContent=`归属日志：06-08 系统分配 → ${u.adv}`;
+ const data=[60,59.8,59.5,59.2,59,58.8,u.w||58.6];const mn=Math.min(...data)-.3,mx=Math.max(...data);
+ $('dSpark').innerHTML=data.map((v,i)=>`<i class="${i===6?'hl':''}" style="height:${14+((v-mn)/(mx-mn))*86}%" title="${v}kg"></i>`).join('');
+ $('dCal').innerHTML=ADM_STATES.map((s,i)=>`<div style="height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;color:${s==='full'?'#fff':'#888'};background:${s==='full'?'#0D8456':s==='part'?'#D8E6CB':'#EEEEEA'}" onclick="renderDay(${i})" title="点击调取当日留档">${new Date(Date.now()-(13-i)*86400000).getDate()}</div>`).join('');
+ renderDay(13)}
+const ADM_STATES=['full','full','part','full','full','none','full','full','part','full','full','full','none','full'];
+const ADM_MEALS=[['早餐',340,'水煮蛋、全麦面包、小米粥、凉拌黄瓜','211：菜 1/2 ─ 基本符合'],['午餐',480,'鸡胸肉、西兰花、番茄、杂粮饭','211 齐了 ✓'],['晚餐',390,'清蒸鱼、菠菜、红薯','211 齐了 ✓']];
+function renderDay(i){
+ const d=new Date(Date.now()-(13-i)*86400000);const ds=`06-${String(d.getDate()).padStart(2,'0')}`;
+ $('dayTitle').textContent=`当日打卡内容 · ${ds}（留档）`;
+ const st=ADM_STATES[i];const box=$('dayBox');
+ if(st==='none'){box.innerHTML='<p class="muted" style="padding:16px 0">这一天没有记录。</p>';return}
+ const w=(60.0-i*0.12).toFixed(1);const meals=st==='full'?ADM_MEALS:[ADM_MEALS[0]];
+ box.innerHTML=`<div class="rrow"><span>晨重</span><b>${w} kg（蓝牙体脂秤）</b></div>`+
+  meals.map((m,mi)=>`<div class="rrow" style="cursor:pointer" onclick="openMealImg('${(currentUser&&currentUser.n)||'李女士'}',${mi},${m[1]},'${ds}')"><span>${m[0]} ≈${m[1]} kcal <span class="badge ok" style="margin-left:6px">点开看图</span></span><b class="muted" style="font-weight:400">${m[2]} · ${m[3]}</b></div>`).join('')+
+  `<div class="rrow"><span>饮水 / 排便 / 睡眠</span><b>${st==='full'?'6 杯 1500ml / 1 次 / 7 小时':'3 杯 750ml / — / 6 小时'}</b></div>`+
+  `<div class="rrow"><span>老师点评分</span><b>${st==='full'?'95 分':'—'}</b></div>`;
+}
+function openMealImg(name,mi,kcal,ds){
+ const M=ADM_MEALS[mi]||ADM_MEALS[0];
+ $('imTitle').textContent=`${name} · ${ds||'06-12'} ${M[0]} · ≈${kcal} kcal（估算）`;
+ $('imDesc').textContent=M[2];$('imAI').textContent='AI 解析与 211 反馈：'+M[3];
+ $('imgModal').style.display='flex';
+}
+function changeAdvisor(){const v=$('dAdvisor').value;if(!currentUser)return;const old=currentUser.adv;currentUser.adv=v;
+ $('dAdvisorLog').textContent=`归属日志：06-08 系统分配 → ${old} ｜ ${stamp()} 后台改派 → ${v}（操作人：admin · 已留痕）`;
+ renderUsers();toast('已改派给 '+v+' · 日志留痕')}
+
+/* 警示中心 */
+const ALERTS=[
+ {lv:'high',t:'连续 2 天未记录',u:'吴女士',adv:'刘老师',s:'待处理'},
+ {lv:'mid',t:'体重单日波动 > 1kg',u:'赵女士',adv:'陈顾问',s:'待处理'},
+ {lv:'low',t:'调研表超 48h 未填',u:'孙女士',adv:'刘老师',s:'待处理'},
+];
+function renderAlerts(){$('alertList').innerHTML=ALERTS.map((a,i)=>`
+ <div class="card alert-card ${a.lv==='high'?'high':''}">
+   <div class="rrow" style="border:0;padding:0">
+     <span><b>${a.t}</b> — ${a.u}（${a.adv}）${a.lv==='high'?'<span class="badge bad" style="margin-left:8px">高</span>':a.lv==='mid'?'<span class="badge warn" style="margin-left:8px">中</span>':'<span class="badge off" style="margin-left:8px">低</span>'}</span>
+     <span style="display:flex;gap:8px">
+       ${a.s==='待处理'?`<button class="btn sm green" onclick="quickRemind('${a.u}');ALERTS[${i}].s='已提醒';renderAlerts()">提醒 TA</button>
+       <button class="btn sm line" onclick="ALERTS[${i}].s='已处理';renderAlerts();toast('已标记处理 · 留痕')">标记已处理</button>`
+       :`<span class="badge ok">${a.s}</span>`}
+     </span></div></div>`).join('');
+ const open=ALERTS.filter(a=>a.s==='待处理').length;$('alertN').textContent=open;$('alertN').style.display=open?'inline-block':'none'}
+
+/* 提醒中心 */
+const picked=new Set();
+function renderRemind(){const tb=$('rBody');tb.innerHTML='';USERS.forEach((u,i)=>{
+ tb.innerHTML+=`<tr><td><span class="checkbox ${picked.has(i)?'on':''}" onclick="togglePick(${i})"></span></td>
+ <td><b>${u.n}</b>${u.real?' <span class="badge ok">本机</span>':''}</td><td>${u.last} 天</td><td>${u.adv}</td>
+ <td class="hide-m">${u.survey==='已完成'?'<span class="badge ok">调研已完成</span>':'<span class="badge warn">调研未完成</span>'}</td></tr>`})}
+function togglePick(i){picked.has(i)?picked.delete(i):picked.add(i);renderRemind()}
+const LOGS=[{t:'06-11 14:02',u:'李女士',k:'新营邀请',s:'已接受'},{t:'06-11 14:02',u:'王女士',k:'新营邀请',s:'待确认'}];
+function stamp(){const d=new Date();return `06-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+function sendBatch(type){if(!picked.size)return toast('先勾选用户');[...picked].forEach(i=>doSend(USERS[i],type));picked.clear();renderRemind();renderLogs();
+ toast(`已发送 ${type==='camp'?'新营邀请':'调研提醒'} · 用户打开小程序时弹窗`)}
+function sendTo(u,type){if(!u)return;doSend(u,type);renderLogs();toast('已发送给 '+u.n)}
+function doSend(u,type){
+ const kind=type==='camp'?'新营邀请':type==='survey'?'调研提醒':'打卡提醒';
+ LOGS.unshift({t:stamp(),u:u.n,k:kind,s:u.real?'已送达·待打开':'待确认'});
+ if(u.real){try{let r=realState();if(!r)r={};if(!r.notices)r.notices=[];
+  const id=Date.now();
+  const tpl=type==='camp'?{id,type:'camp',title:'新一期「21 天轻体伙伴营」邀请（来自公司后台）',body:'公司刚刚通过后台向你发出了新一期邀请——这条提醒就是从后台「提醒中心」真实发出的。',done:false,target:'home'}
+   :type==='survey'?{id,type:'survey',title:'健康调研提醒（来自公司后台）',body:'公司提醒你完成健康调研表，3 分钟，入你的健康档案。',done:false,target:'survey'}
+   :{id,type:'remind',title:'今日打卡提醒（来自公司后台）',body:'今天还没完成记录——称一下、拍一拍，30 秒搞定。',done:false,target:'weighing'};
+  r.notices.unshift(tpl);localStorage.setItem('msm5',JSON.stringify(r));}catch(e){}}}
+function renderLogs(){$('lBody').innerHTML=LOGS.map(l=>`<tr><td class="muted">${l.t}</td><td>${l.u}</td><td>${l.k}</td>
+ <td>${l.s==='已接受'?'<span class="badge ok">已接受</span>':l.s.includes('送达')?'<span class="badge ok">'+l.s+'</span>':'<span class="badge warn">'+l.s+'</span>'}</td></tr>`).join('')}
+
+/* 营期管理 */
+const CAMPS=[{n:'21 天轻体伙伴营 · 第 6 期',p:'06-08 → 06-28',m:12,s:'进行中'},{n:'21 天轻体伙伴营 · 第 5 期',p:'05-12 → 06-01',m:15,s:'已结营'}];
+function renderCamps(){$('campBody').innerHTML=CAMPS.map((c,i)=>`<tr><td><b>${c.n}</b></td><td class="muted">${c.p}</td><td class="num">${c.m} 人</td>
+ <td>${c.s==='进行中'?'<span class="badge ok">进行中</span>':'<span class="badge off">已结营</span>'}</td>
+ <td>${c.s==='进行中'?'<button class="btn sm green" onclick="nav(\'campDetail\')">数据监控</button>':'<button class="btn sm line" onclick="toast(\'结营报告（演示）\')">结营报告</button>'}</td></tr>`).join('')}
+function createCamp(){const n=$('campName').value.trim()||'未命名打卡营';
+ CAMPS.unshift({n,p:'06-15 → 07-05',m:12,s:'进行中'});renderCamps();$('campName').value='';
+ toast(`「${n}」已创建 · 已向圈选用户发送弹窗邀请，老师同步收到名单`)}
+
+/* 共享关系 */
+const SHARES=[{o:'李女士',v:'张老师',src:'用户邀请',t:'06-08'},{o:'李女士',v:'陈顾问',src:'公司指派',t:'06-09'},{o:'王女士',v:'张老师',src:'用户邀请',t:'06-08'},{o:'演示用户（你）',v:'张老师',src:'用户邀请',t:'06-08'}];
+function renderShares(){$('sBody').innerHTML=SHARES.map((s,i)=>`<tr><td>${s.o}</td><td>${s.v}</td><td>${s.src}</td><td class="muted">${s.t}</td>
+ <td><button class="btn sm line" onclick="SHARES.splice(${i},1);renderShares();toast('已解除 · 对方即时失访 · 留痕')">解除</button></td></tr>`).join('')}
+
+/* ===== CSV 导出（真实下载） ===== */
+function dl(name,rows){const csv='﻿'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name;a.click();toast('已导出 '+name)}
+function exportCSV(kind){hydrate();
+ if(kind==='checkin')dl('打卡总表-0612.csv',[['用户','老师','打卡时间','晨重kg','早餐kcal','午餐kcal','晚餐kcal','饮水杯','排便次','昨晚睡眠h','点评分','是否补卡','是否完整'],
+  ...USERS.map(u=>[u.n,u.adv,u.ct||(u.w?'—':'未打卡'),u.w||'未称',...u.meals.map(k=>k||'—'),u.water||0,u.bowel||0,u.sleep||'—',u.score||'—','否',(u.w&&u.meals.filter(Boolean).length>=3)?'完整':'未完整'])]);
+ else if(kind==='users')dl('用户列表-0612.csv',[['用户','手机号','老师','今晨体重','今日餐数','调研','连续打卡天数','状态'],
+  ...USERS.map(u=>[u.n,u.ph||'',u.adv,u.w||'未称',u.meals.filter(Boolean).length,u.survey||'未完成',u.streak,u.status])]);
+ else if(kind==='daily')dl('日报-0612.csv',[['指标','数值'],['在营用户',12],['称重完成','9/12 (75%)'],['餐食记录','8/12 (67%)'],['完整打卡','7/12'],['平均摄入(估算)','1180 kcal'],['体重较昨日(均值)','-0.18 kg'],['连续2天未记录','吴女士'],['体重波动>1kg','赵女士'],['调研超48h未填','孙女士']]);
+ else if(kind==='user1')dl('李女士-记录-0612.csv',[['日期','打卡时间','晨重kg','早餐','午餐','晚餐','饮水','排便','睡眠h','点评分'],['06-12','06:42','58.4','340','480','390','6杯','1次','7','95'],['06-11','06:51','58.6','310','450','380','6杯','1次','7','92'],['06-10','06:39','58.8','330','420','—','5杯','1次','6','88']]);}
+
+/* 启动 */
+$('dashDate').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+renderCheckin();renderDaily();renderUsers();renderAlerts();renderRemind();renderLogs();renderShares();renderCamps();
+</script>
+</body>
+</html>
