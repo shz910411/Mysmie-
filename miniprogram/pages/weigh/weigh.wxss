@@ -1,0 +1,74 @@
+.brandbar .logo {
+  height: 31px;
+}
+.bell {
+  font-size: 13px;
+  text-decoration: none;
+}
+.bell-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--warn);
+  margin-left: 5px;
+  vertical-align: 1px;
+}
+.hero {
+  padding: 40px 0 8px;
+  text-align: center;
+}
+.hero-num {
+  margin-top: 14px;
+}
+.mega.none {
+  font-size: 34px;
+  color: var(--muted2);
+}
+.ctr-link {
+  text-align: center;
+  margin-top: 14px;
+}
+.privacy-note {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  color: var(--muted2);
+}
+.mini {
+  font-size: 11px;
+}
+.spark-mt {
+  margin-top: 16px;
+}
+.kcal {
+  font-family: var(--serif);
+  font-size: 23px;
+}
+.kcal-unit {
+  font-size: 11px;
+  color: var(--muted2);
+  letter-spacing: .08em;
+}
+.three .metric {
+  flex: 1;
+  text-align: center;
+}
+.eyebrow.flat {
+  letter-spacing: .2em;
+  display: block;
+  margin-bottom: 6px;
+}
+.mv {
+  font-family: var(--serif);
+  font-size: 19px;
+  margin-right: 4px;
+}
+.row-title {
+  letter-spacing: .06em;
+  font-weight: 600;
+}
+.gap {
+  margin-top: 5px;
+}

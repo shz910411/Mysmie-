@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "称重"
+  "navigationBarTitleText": "",
+  "navigationBarBackgroundColor": "#FBFAF6",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#FBFAF6"
 }
