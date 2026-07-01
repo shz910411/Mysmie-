@@ -1,9 +1,489 @@
+/* ============================================================
+   M2-000 全局设计系统 · EDITORIAL v0.7 最终生效值（照 03-UI蓝本.md 第2-3节）
+   去卡片化(发丝线节奏) / 去 emoji / 2px 直角墨绿按钮 / 下划线输入 / 超大 Didot 数字
+   ============================================================ */
 page {
-  background: #FAFBF2;
-  color: #233710;
-  font-family: "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
+  --green: #0D8456;
+  --green-2: #289269;
+  --green-3: #439F7C;
+  --pastel: #B1DD72;
+  --pale: #E8EEC5;
+  --forest: #233710;
+  --warn: #B4543A;
+  --serif: "Didot", "Didot LT Pro", "Playfair Display", Georgia, "Songti SC", "STSong", serif;
+  --ink2: #1B1C17;
+  --paper: #FBFAF6;
+  --line2: #E8E5DB;
+  --muted2: #A9A698;
+
+  background: var(--paper);
+  color: var(--ink2);
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
 }
 
+/* 屏容器：大留白（native tabBar 处理底部，无需 92px 让位） */
+.screen {
+  padding: 50px 26px 60px;
+  box-sizing: border-box;
+}
+
+/* 区块：去卡片 = 发丝线节奏 + 大留白 */
+.card {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--line2);
+}
+.card:last-child {
+  border-bottom: 0;
+}
+/* 左强调块（AI 反馈 / 小结 / 系统提醒） */
+.accent {
+  border-left: 2px solid var(--green);
+  padding-left: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background: var(--forest);
+  color: #fff;
+  letter-spacing: .32em;
+  font-size: 13px;
+  padding: 17px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.3;
+}
+.btn::after {
+  border: none;
+}
+.btn.onGreen {
+  background: #fff;
+  color: var(--forest);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--ink2);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  letter-spacing: .12em;
+  font-weight: 400;
+}
+.btn.small {
+  width: auto;
+  padding: 10px 18px;
+  letter-spacing: .14em;
+  font-size: 12px;
+}
+.btn[disabled] {
+  background: #D4D1C5;
+  color: #fff;
+}
+.btn-hover {
+  opacity: .88;
+}
+
+/* 文字链（编辑式核心：次操作是下划线文字链，非描边按钮） */
+.linklike {
+  color: var(--ink2);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 13px;
+  letter-spacing: .04em;
+}
+
+/* 下划线输入 */
+.input {
+  border: 0;
+  border-bottom: 1px solid var(--ink2);
+  background: transparent;
+  padding: 10px 2px;
+  font-family: var(--serif);
+  font-size: 19px;
+}
+
+/* ---------- 字阶 ---------- */
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .42em;
+  color: var(--muted2);
+}
+.mega {
+  font-family: var(--serif);
+  font-size: 92px;
+  line-height: 1.02;
+  color: var(--ink2);
+  font-weight: 400;
+  letter-spacing: -.01em;
+}
+.mega .unit {
+  font-size: 21px;
+  margin-left: 8px;
+  color: var(--muted2);
+}
+.readout {
+  font-family: var(--serif);
+  font-size: 62px;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0;
+}
+.readout .unit {
+  font-size: 22px;
+  color: var(--muted2);
+}
+.h-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+.h-sub {
+  font-size: 13px;
+  color: #8A8A80;
+  line-height: 1.7;
+  letter-spacing: .02em;
+}
+.muted {
+  color: var(--muted2);
+}
+
+/* ---------- 品牌页眉 ---------- */
+.brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brandbar .logo {
+  height: 34px;
+}
+.brandbar .bt {
+  text-align: right;
+}
+.brandbar .bt .wm {
+  display: block;
+  font-size: 14px;
+  letter-spacing: .38em;
+  font-weight: 600;
+  color: var(--ink2);
+  line-height: 1.15;
+}
+.brandbar .bt .cn {
+  display: block;
+  font-size: 9px;
+  letter-spacing: .5em;
+  color: var(--muted2);
+  margin-top: 3px;
+}
+/* 主页 S4 居中变体 */
+.brandbar.center {
+  justify-content: center;
+}
+
+/* ---------- 趋势条 spark ---------- */
+.spark {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 54px;
+}
+.spark .bar {
+  flex: 1;
+  background: #EFEDE3;
+  position: relative;
+}
+.spark .bar.hl {
+  background: var(--green);
+}
+
+/* ---------- 餐格 meal-mini ---------- */
+.meal-mini {
+  display: flex;
+  gap: 1px;
+  background: var(--line2);
+  border: 1px solid var(--line2);
+  margin-top: 16px;
+}
+.meal-mini .m {
+  flex: 1;
+  text-align: center;
+  background: var(--paper);
+  padding: 12px 4px;
+}
+.meal-mini .m.done {
+  background: #F2F6EE;
+}
+.meal-mini .m .v {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 15px;
+}
+.meal-mini .m .k {
+  font-size: 10px;
+  color: var(--muted2);
+}
+
+/* ---------- 份量胶囊 / 分段 ---------- */
+.portion {
+  display: flex;
+  gap: 5px;
+}
+.portion .i {
+  font-size: 11px;
+  border: 1px solid var(--line2);
+  border-radius: 2px;
+  padding: 3px 8px;
+  color: #8A8A80;
+}
+.portion .i.on {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #fff;
+}
+.seg {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+.seg .i {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  border: 1.5px solid var(--line2);
+  border-radius: 2px;
+  padding: 9px 0;
+  color: #8A8A80;
+}
+.seg .i.on {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #fff;
+}
+
+/* ---------- 步进器 ---------- */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 16px 0 10px;
+}
+.stepper .pm {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line2);
+  background: #fff;
+  font-size: 24px;
+  color: var(--green);
+  line-height: 44px;
+  text-align: center;
+}
+.stepper .n {
+  font-family: var(--serif);
+  font-size: 32px;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* ---------- 名单行 / 头像 ---------- */
+.member {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line2);
+}
+.member:last-child {
+  border-bottom: 0;
+}
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #EFEDE3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-family: var(--serif);
+  color: var(--forest);
+  flex-shrink: 0;
+}
+
+/* ---------- 深色 hero（对比页 / 分享卡）：墨绿直角 ---------- */
+.cmp-hero {
+  background: var(--forest);
+  color: #fff;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.cmp-hero .tri {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+.cmp-hero .tri .v {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 500;
+  display: block;
+}
+.cmp-hero .tri .l {
+  font-size: 11px;
+  opacity: .8;
+}
+.cmp-hero .quote {
+  font-family: var(--serif);
+  font-size: 12.5px;
+  letter-spacing: .05em;
+  line-height: 2;
+  text-align: center;
+  margin-top: 18px;
+}
+
+/* ---------- 称重流程 ---------- */
+.weighing-stage {
+  text-align: center;
+  padding-top: 60px;
+}
+.pulse {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 0 auto 26px;
+  background: #F2F6EE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.back {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--line2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+/* ---------- 数据对比表 cmp-table：年报式四列（grid 版）---------- */
+.cmp-table {
+  width: 100%;
+}
+.cmp-table .thead,
+.cmp-table .trow {
+  display: grid;
+  grid-template-columns: 31% 24% 24% 21%;
+  align-items: start;
+}
+.cmp-table .thead .th {
+  font-size: 9.5px;
+  letter-spacing: .18em;
+  color: var(--muted2);
+  font-weight: 500;
+  padding: 0 0 12px;
+  border-bottom: 1px solid var(--ink2);
+  text-align: right;
+}
+.cmp-table .thead .th:first-child {
+  text-align: left;
+}
+.cmp-table .trow {
+  border-bottom: 1px solid var(--line2);
+  padding: 15px 0;
+}
+.cmp-table .trow:last-child {
+  border-bottom: 0;
+}
+.cmp-table .met {
+  text-align: left;
+}
+.cmp-table .met .name {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  display: block;
+}
+.cmp-table .met .ref {
+  display: block;
+  font-size: 9.5px;
+  color: #B5B2A4;
+  margin-top: 4px;
+  letter-spacing: .03em;
+  line-height: 1.5;
+}
+.cmp-table .num {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--muted2);
+  text-align: right;
+}
+.cmp-table .num.today {
+  color: var(--ink2);
+}
+.cmp-table .num .st {
+  display: block;
+  font-size: 9px;
+  letter-spacing: .12em;
+  margin-top: 5px;
+  font-family: -apple-system, "PingFang SC", sans-serif;
+}
+.st.good {
+  color: var(--green);
+}
+.st.warn {
+  color: #A8814A;
+}
+.cmp-table .chg {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ink2);
+  text-align: right;
+  padding-top: 2px;
+}
+.cmp-table .chg.zero {
+  color: #C9C6B8;
+}
+
+/* ---------- 徽标 ---------- */
+.badge {
+  display: inline-block;
+  font-size: 9px;
+  border-radius: 1px;
+  padding: 1px 6px;
+  letter-spacing: .06em;
+}
+.badge.good {
+  background: #DDF3E8;
+  color: var(--green);
+}
+.badge.warn {
+  background: #FBEFD9;
+  color: #B07A1F;
+}
+
+/* ============================================================
+   遗留占位样式（M0-003 tab 空壳 + M1 引导页），M1-010 迁移后清理
+   ============================================================ */
 .placeholder {
   display: flex;
   flex-direction: column;
@@ -11,19 +491,15 @@ page {
   justify-content: center;
   height: 100vh;
 }
-
 .placeholder__title {
   font-size: 40rpx;
   color: #0D8456;
 }
-
 .placeholder__hint {
   margin-top: 16rpx;
   font-size: 26rpx;
   color: #85907A;
 }
-
-/* 引导页（S1/S2/S3）通用样式 */
 .onboard {
   padding: 80rpx 48rpx;
 }
@@ -42,18 +518,6 @@ page {
   margin-top: 24rpx;
   font-size: 24rpx;
   color: #85907A;
-}
-.row {
-  margin-bottom: 32rpx;
-}
-.input {
-  border-bottom: 1rpx solid #E4F1EC;
-  padding: 20rpx 0;
-  font-size: 30rpx;
-}
-.opt {
-  margin-right: 40rpx;
-  font-size: 30rpx;
 }
 .consent-row {
   margin-bottom: 24rpx;
@@ -76,4 +540,8 @@ page {
   border: 1rpx solid #0D8456;
   border-radius: 0;
   margin-top: 24rpx;
+}
+.opt {
+  margin-right: 40rpx;
+  font-size: 30rpx;
 }
