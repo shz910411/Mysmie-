@@ -1,0 +1,50 @@
+.ctr {
+  text-align: center;
+}
+.mt30 {
+  margin-top: 30px;
+}
+.mt10 {
+  margin-top: 10px;
+}
+.pad {
+  padding: 60px 0;
+}
+/* hero 小单位 */
+.cmp-hero .tri .hu {
+  font-size: 12px;
+  margin-left: 1px;
+}
+/* 表格小单位 */
+.cmp-table .num .nu {
+  font-size: 10px;
+  color: #B5B2A4;
+  margin-left: 2px;
+}
+.foot {
+  margin-top: 12px;
+  font-size: 10px;
+  letter-spacing: .04em;
+  line-height: 1.7;
+}
+.foot2 {
+  margin: 14px 0;
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+.micro {
+  font-size: 11px;
+}
+.praise {
+  font-size: 13px;
+  line-height: 2;
+  margin-top: 10px;
+}
+.praise-i {
+  color: var(--ink2);
+}
+.analysis {
+  font-size: 13px;
+  line-height: 1.95;
+  margin-top: 10px;
+}

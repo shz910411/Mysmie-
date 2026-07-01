@@ -1,0 +1,66 @@
+<view class="screen">
+  <view class="back" bindtap="onBack">‹</view>
+  <view class="h-title ctr mt30">数据对比</view>
+
+  <view wx:if="{{loading}}" class="muted ctr pad">加载中…</view>
+
+  <block wx:elif="{{!hasCompare}}">
+    <view class="muted ctr pad">还需至少两次称重才能生成对比～</view>
+    <button class="btn" bindtap="onHome">回主页</button>
+  </block>
+
+  <block wx:else>
+    <!-- 深绿 hero 三栏 -->
+    <view class="cmp-hero">
+      <view class="tri">
+        <view><text class="v">{{days}}</text><text class="l">历经 · 天</text></view>
+        <view><text class="v">{{wChg}}<text class="hu">kg</text></text><text class="l">体重变化</text></view>
+        <view><text class="v">{{fChg}}<text class="hu">kg</text></text><text class="l">脂肪变化</text></view>
+      </view>
+      <view class="quote">{{quote}}</view>
+    </view>
+
+    <!-- 14 行年报表 -->
+    <view class="card">
+      <view class="cmp-table">
+        <view class="thead">
+          <text class="th">指标 / 参考</text>
+          <text class="th">{{fromDate}}</text>
+          <text class="th">{{toDate}}</text>
+          <text class="th">变化</text>
+        </view>
+        <view wx:for="{{rows}}" wx:key="name" class="trow">
+          <view class="met">
+            <text class="name">{{item.name}}</text>
+            <text wx:if="{{item.ref}}" class="ref">{{item.ref}}</text>
+          </view>
+          <view class="num">{{item.fromVal}}<text wx:if="{{item.unit}}" class="nu">{{item.unit}}</text></view>
+          <view class="num today">
+            {{item.toVal}}<text wx:if="{{item.unit}}" class="nu">{{item.unit}}</text>
+            <text wx:if="{{item.stText}}" class="st {{item.stClass}}">{{item.stText}}</text>
+          </view>
+          <view class="chg {{item.chgZero ? 'zero' : ''}}">{{item.chg}}</view>
+        </view>
+      </view>
+      <view class="muted foot">「标准 / 偏离」等为参考区间比对，仅作个人记录，不构成健康评估。</view>
+    </view>
+
+    <!-- 值得表扬 -->
+    <view class="card">
+      <text class="eyebrow">值得表扬</text>
+      <view class="praise">
+        <view wx:for="{{praise}}" wx:key="*this" class="praise-i">✓ {{item}}</view>
+      </view>
+    </view>
+
+    <!-- 数值分析（中性解读）-->
+    <view class="card accent">
+      <view class="row"><text class="eyebrow">数值分析</text><text class="muted micro">中性解读</text></view>
+      <view class="analysis">{{analysis}}</view>
+    </view>
+
+    <view class="muted foot2">以上为体脂秤测量参考值，仅作个人记录，不构成健康评估。</view>
+    <button class="btn" bindtap="onShare">分享到伙伴群</button>
+    <button class="btn ghost mt10" bindtap="onHome">回主页</button>
+  </block>
+</view>
