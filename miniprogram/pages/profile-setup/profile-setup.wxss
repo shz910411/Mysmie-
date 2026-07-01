@@ -1,0 +1,22 @@
+.mt {
+  margin-top: 26px;
+}
+.fld {
+  display: block;
+  font-size: 13px;
+  color: var(--muted2);
+  margin: 18px 0 6px;
+}
+.gender {
+  gap: 8px;
+  margin-top: 6px;
+}
+.gender .i {
+  padding: 8px 22px;
+  font-size: 14px;
+}
+.full {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}

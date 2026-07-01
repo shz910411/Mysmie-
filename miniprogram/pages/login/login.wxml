@@ -1,7 +1,15 @@
-<view class="onboard">
-  <view class="onboard__brand">迈思美</view>
-  <view class="onboard__title">登录</view>
-  <button class="btn-primary" bindtap="onWxLogin">微信登录</button>
-  <button class="btn-line" open-type="getPhoneNumber" bindgetphonenumber="onGetPhone">授权手机号</button>
-  <button wx:if="{{dev}}" class="btn-line" bindtap="onDevLogin">开发登录（仅本地）</button>
+<view class="screen login-screen">
+  <view class="welcome-top">
+    <image class="welcome-logo" src="/images/logo-v-white.png" mode="widthFix" />
+    <view class="slogan">吃饱也能轻</view>
+    <view class="slogan">吃对样子好</view>
+    <view class="slogan">自律成良习</view>
+  </view>
+
+  <view class="welcome-actions">
+    <button class="btn onGreen" hover-class="btn-hover" bindtap="onWxLogin">微信一键登录</button>
+    <button class="btn onGreen mt12" open-type="getPhoneNumber" bindgetphonenumber="onGetPhone">授权手机号</button>
+    <view wx:if="{{dev}}" class="dev-link" bindtap="onDevLogin">开发登录（仅本地）</view>
+    <view class="agree">登录即代表同意《用户协议》</view>
+  </view>
 </view>

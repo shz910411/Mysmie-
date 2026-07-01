@@ -4,7 +4,7 @@ Page({
   data: { gender: '', age: '', height: '' },
 
   onGender(e) {
-    this.setData({ gender: e.detail.value });
+    this.setData({ gender: e.currentTarget.dataset.g });
   },
   onAge(e) {
     this.setData({ age: e.detail.value });

@@ -1,0 +1,7 @@
+.mt {
+  margin-top: 26px;
+}
+.note {
+  margin: 6px 0 16px;
+  font-size: 12px;
+}

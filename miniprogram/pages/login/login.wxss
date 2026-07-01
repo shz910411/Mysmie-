@@ -1,0 +1,48 @@
+.login-screen {
+  min-height: 100vh;
+  background: linear-gradient(165deg, #0D8456 0%, #289269 60%, #439F7C 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #fff;
+}
+.welcome-top {
+  text-align: center;
+  padding-top: 90px;
+}
+.welcome-logo {
+  width: 185px;
+  margin: 0 auto;
+  display: block;
+}
+.slogan {
+  font-family: var(--serif);
+  font-size: 13px;
+  margin-top: 12px;
+  opacity: .92;
+  letter-spacing: .4em;
+}
+.slogan:first-of-type {
+  margin-top: 36px;
+}
+.welcome-actions {
+  padding-bottom: 40px;
+}
+.mt12 {
+  margin-top: 12px;
+}
+.dev-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, .85);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.agree {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, .7);
+  letter-spacing: .04em;
+}

@@ -4,12 +4,11 @@ const { CONSENT_VERSION } = require('../../config');
 Page({
   data: { privacy: false, health: false },
 
-  onPrivacyChange(e) {
-    this.setData({ privacy: e.detail.value.length > 0 });
+  onTogglePrivacy() {
+    this.setData({ privacy: !this.data.privacy });
   },
-
-  onHealthChange(e) {
-    this.setData({ health: e.detail.value.length > 0 });
+  onToggleHealth() {
+    this.setData({ health: !this.data.health });
   },
 
   onAgree() {

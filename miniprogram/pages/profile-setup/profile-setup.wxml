@@ -1,14 +1,26 @@
-<view class="onboard">
-  <view class="onboard__title">完善资料</view>
+<view class="screen">
+  <view class="brandbar">
+    <image class="logo" src="/images/logo-mark.png" mode="heightFix" />
+    <view class="bt"><text class="wm">MYSMIE</text><text class="cn">迈思美</text></view>
+  </view>
 
-  <radio-group class="row" bindchange="onGender">
-    <label class="opt"><radio value="female" /> 女</label>
-    <label class="opt"><radio value="male" /> 男</label>
-    <label class="opt"><radio value="other" /> 其他</label>
-  </radio-group>
+  <view class="h-title mt">30 秒建档</view>
+  <view class="h-sub">只需 3 项 —— 体重不用填，上秤称一下就知道了。</view>
 
-  <input class="row input" type="number" placeholder="年龄" bindinput="onAge" />
-  <input class="row input" type="number" placeholder="身高 (cm)" bindinput="onHeight" />
+  <view class="card">
+    <text class="fld">性别</text>
+    <view class="portion gender">
+      <view class="i {{gender === 'female' ? 'on' : ''}}" data-g="female" bindtap="onGender">女</view>
+      <view class="i {{gender === 'male' ? 'on' : ''}}" data-g="male" bindtap="onGender">男</view>
+      <view class="i {{gender === 'other' ? 'on' : ''}}" data-g="other" bindtap="onGender">其他</view>
+    </view>
 
-  <button class="btn-primary" bindtap="onSubmit">完成，进入首页</button>
+    <text class="fld">年龄</text>
+    <input class="input full" type="number" value="{{age}}" bindinput="onAge" />
+
+    <text class="fld">身高 (cm)</text>
+    <input class="input full" type="number" value="{{height}}" bindinput="onHeight" />
+  </view>
+
+  <button class="btn" bindtap="onSubmit">完成，去称一下</button>
 </view>

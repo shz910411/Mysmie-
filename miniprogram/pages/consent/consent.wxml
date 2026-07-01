@@ -1,20 +1,26 @@
-<view class="onboard">
-  <view class="onboard__title">隐私与授权</view>
+<view class="screen">
+  <view class="brandbar">
+    <image class="logo" src="/images/logo-mark.png" mode="heightFix" />
+    <view class="bt"><text class="wm">MYSMIE</text><text class="cn">迈思美</text></view>
+  </view>
 
-  <checkbox-group class="consent-row" bindchange="onPrivacyChange">
-    <label class="consent-label">
-      <checkbox value="privacy" />
-      <text>我已阅读并同意《隐私政策》（必选）</text>
-    </label>
-  </checkbox-group>
+  <view class="h-title mt">在开始之前</view>
+  <view class="h-sub">我们想先把数据的事说清楚 —— 你的记录归你，怎么用由你决定。</view>
 
-  <checkbox-group class="consent-row" bindchange="onHealthChange">
-    <label class="consent-label">
-      <checkbox value="health" />
-      <text>我同意收集健康数据用于记录（可选，不影响浏览）</text>
-    </label>
-  </checkbox-group>
+  <view class="consent {{privacy ? 'on' : ''}}" bindtap="onTogglePrivacy">
+    <view class="box">{{privacy ? '✓' : ''}}</view>
+    <view class="txt">
+      <text class="t">《隐私政策》</text>了解我们收集哪些信息（手机号、记录数据）、用于什么、存多久、如何删除。
+    </view>
+  </view>
 
-  <button class="btn-primary" bindtap="onAgree">同意并继续</button>
-  <view class="onboard__hint">不勾选健康数据仍可浏览，记录功能将锁定。</view>
+  <view class="consent {{health ? 'on' : ''}}" bindtap="onToggleHealth">
+    <view class="box">{{health ? '✓' : ''}}</view>
+    <view class="txt">
+      <text class="t">健康数据单独授权</text>体重、餐食照片、饮水排便属健康相关信息，加密存储、仅用于你的记录与服务，不默认给任何他人查看。可随时在「我的」撤回此授权。
+    </view>
+  </view>
+
+  <view class="muted note">两项均为主动勾选，第二项不勾选也可浏览，但无法使用记录功能。</view>
+  <button class="btn" disabled="{{!privacy}}" bindtap="onAgree">同意并继续</button>
 </view>

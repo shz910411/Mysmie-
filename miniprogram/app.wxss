@@ -481,9 +481,50 @@ page {
   color: #B07A1F;
 }
 
-/* ============================================================
-   遗留占位样式（M0-003 tab 空壳 + M1 引导页），M1-010 迁移后清理
-   ============================================================ */
+/* ---------- 同意勾选块（S2 双层同意）---------- */
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #fff;
+  border: 1.5px solid var(--line2);
+  border-radius: 0;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.consent.on {
+  border-color: var(--green);
+  background: #F2F6EE;
+}
+.consent .box {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #B6BCAF;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+}
+.consent.on .box {
+  background: var(--green);
+  border-color: var(--green);
+}
+.consent .txt {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.consent .txt .t {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+/* tab 占位（meal/summary/me，M3+/M5 落地后替换）*/
 .placeholder {
   display: flex;
   flex-direction: column;
@@ -499,49 +540,4 @@ page {
   margin-top: 16rpx;
   font-size: 26rpx;
   color: #85907A;
-}
-.onboard {
-  padding: 80rpx 48rpx;
-}
-.onboard__brand {
-  font-size: 48rpx;
-  color: #0D8456;
-  text-align: center;
-  margin-bottom: 24rpx;
-}
-.onboard__title {
-  font-size: 40rpx;
-  color: #233710;
-  margin-bottom: 48rpx;
-}
-.onboard__hint {
-  margin-top: 24rpx;
-  font-size: 24rpx;
-  color: #85907A;
-}
-.consent-row {
-  margin-bottom: 24rpx;
-}
-.consent-label {
-  display: flex;
-  align-items: center;
-  font-size: 28rpx;
-  color: #233710;
-}
-.btn-primary {
-  background: #0D8456;
-  color: #fff;
-  border-radius: 0;
-  margin-top: 16rpx;
-}
-.btn-line {
-  background: #fff;
-  color: #0D8456;
-  border: 1rpx solid #0D8456;
-  border-radius: 0;
-  margin-top: 24rpx;
-}
-.opt {
-  margin-right: 40rpx;
-  font-size: 30rpx;
 }
