@@ -259,16 +259,16 @@ S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-00
 
 | ID | 标题 | 优先级 | 状态 | 成功标准 | 依赖真机/凭证 |
 |---|---|---|---|---|---|
-| M1-001b | migration 002：`users` 补 `birth_year INT` | P0 | 待 QA `5b…` | `002_*.sql` 幂等；列存在；`npm run migrate` 跑通且账本记录 | 否 |
-| M1-001 | 后端 auth/login（code2Session）+ dev 旁路 | P0 | 待 QA（真登录待真机）| `POST /auth/login {code}`→jscode2session→openid→upsert users→签 JWT，返 `{token,isNew}`；openid 唯一；session_key 不外泄。**同时** `POST /auth/dev-login` 仅 dev 生效、生产 404 | 真登录需 AppID/Secret+真机；**dev 旁路本地全验** |
-| M1-002 | 后端 auth/phone（手机号） | P0 | **待真机验收** | `POST /auth/phone`→换/解密手机号→写 `users.phone`（唯一约束）；重复手机号提示迁移而非建新号 | ⚠️ 真 AppSecret+真机；本地 dev 手填旁路 |
-| M1-003 | 后端 users/profile（轻建档） | P0 | 待 QA | `GET/PUT /me/profile`：gender/birth_year/height_cm 入库，target_weight_kg 可选；可改 | 否（dev 旁路 JWT 即可验） |
-| M1-004 | 后端 consent（带版本+撤回） | P0 | 待 QA | `POST /me/consents {type,version}`→consent_records；`DELETE /me/consents/:type`→写 revoked_at；同意带版本 | 否 |
-| M1-008 | 全局守卫 HealthConsentGuard | P0 | 待 QA（前端入口禁用随 M2 称重入口）| 未同意 health_data 时，称重/打卡类接口返 403；同意后解锁。后端守卫 + 前端入口禁用+友好提示 | 否 |
-| M1-005 | 小程序 S1 登录页 | P0 | 待 QA（待 devtools 真编译）| wx.login→/auth/login；getPhoneNumber 按钮→/auth/phone；**dev 环境提供"开发登录"入口走 dev-login**；新用户 ≤3 步进首页 | 真手机号需真机；流程本地 dev 验 |
-| M1-006 | 小程序 S2 双层同意页 | P0 | 待 QA（待 devtools 真编译）| 两层：通用隐私(必勾)+健康数据(**独立、非默认勾选、不捆绑**)；拒绝健康同意可浏览但记录功能锁；同意带版本回传 | 否 |
-| M1-007 | 小程序 S3 轻建档页 | P0 | 待 QA（待 devtools 真编译）| 性别/年龄/身高 1 屏→PUT /me/profile(年龄转 birth_year)；完成进首页；可在"我的"改 | 否 |
-| M1-009 | project.config.json appid 占位→正式号 | P1 | 待 QA（待 devtools 真编译）| appid 从 `touristappid` 改为 `wx4bc078e96fffcd89`（Chester 2026-06-29 确认=迈思美正式号）；微信开发者工具重编译仍通过 4 tab 可预览 | 真机/开发者工具需该号开发权限 |
+| M1-001b | migration 002：`users` 补 `birth_year INT` | P0 | 已关闭 | `002_*.sql` 幂等；列存在；`npm run migrate` 跑通且账本记录 | 否 |
+| M1-001 | 后端 auth/login（code2Session）+ dev 旁路 | P0 | 已关闭（dev旁路+安全红线过·真登录待真机补验）| `POST /auth/login {code}`→jscode2session→openid→upsert users→签 JWT，返 `{token,isNew}`；openid 唯一；session_key 不外泄。**同时** `POST /auth/dev-login` 仅 dev 生效、生产 404 | 真登录需 AppID/Secret+真机；**dev 旁路本地全验** |
+| M1-002 | 后端 auth/phone（手机号） | P0 | 已关闭（本地守卫/唯一约束过·真解密待真机补验）| `POST /auth/phone`→换/解密手机号→写 `users.phone`（唯一约束）；重复手机号提示迁移而非建新号 | ⚠️ 真 AppSecret+真机；本地 dev 手填旁路 |
+| M1-003 | 后端 users/profile（轻建档） | P0 | 已关闭 | `GET/PUT /me/profile`：gender/birth_year/height_cm 入库，target_weight_kg 可选；可改 | 否（dev 旁路 JWT 即可验） |
+| M1-004 | 后端 consent（带版本+撤回） | P0 | 已关闭 | `POST /me/consents {type,version}`→consent_records；`DELETE /me/consents/:type`→写 revoked_at；同意带版本 | 否 |
+| M1-008 | 全局守卫 HealthConsentGuard | P0 | 已关闭（守卫过·前端入口禁用随 M2 称重接口落地）| 未同意 health_data 时，称重/打卡类接口返 403；同意后解锁。后端守卫 + 前端入口禁用+友好提示 | 否 |
+| M1-005 | 小程序 S1 登录页 | P0 | 已关闭（真编译+全链路过）| wx.login→/auth/login；getPhoneNumber 按钮→/auth/phone；**dev 环境提供"开发登录"入口走 dev-login**；新用户 ≤3 步进首页 | 真手机号需真机；流程本地 dev 验 |
+| M1-006 | 小程序 S2 双层同意页 | P0 | 已关闭（真编译+全链路过）| 两层：通用隐私(必勾)+健康数据(**独立、非默认勾选、不捆绑**)；拒绝健康同意可浏览但记录功能锁；同意带版本回传 | 否 |
+| M1-007 | 小程序 S3 轻建档页 | P0 | 已关闭（真编译+全链路过）| 性别/年龄/身高 1 屏→PUT /me/profile(年龄转 birth_year)；完成进首页；可在"我的"改 | 否 |
+| M1-009 | project.config.json appid 占位→正式号 | P1 | 已关闭（真编译过）| appid 从 `touristappid` 改为 `wx4bc078e96fffcd89`（Chester 2026-06-29 确认=迈思美正式号）；微信开发者工具重编译仍通过 4 tab 可预览 | 真机/开发者工具需该号开发权限 |
 
 **M1 完成判据**：①新用户走 S1→S2→S3 ≤3 步进首页（dev 旁路本地可验全链）；②真机微信登录+手机号入库（真机验收项，凭证到位后补验）；③拒绝健康同意则记录功能锁定、同意后解锁；④同意带版本入库；⑤dev 旁路生产环境不存在。
 
@@ -333,11 +333,13 @@ S3 建档填"年龄"，但 `users` 表无年龄列（01/02 文档 gap）。M1-00
 
 **📌 部署 caveat（非阻塞，给 Dev/部署）**：dev-login/probe 默认关闭，生产显式 `NODE_ENV=production` 即 404；但**生产绝不能带含 `NODE_ENV=development` 的 dev `.env`**（dotenv 会加载→后门暴露）。M0-006 已保证 .env 不进 Git，正路安全。
 
-**⏳ 仍需收尾（不能由 QA 本地关闭）：**
-- **前端真编译铁律**（M1-005/6/7/9）：须微信开发者工具导入 `miniprogram/` 真编译 + 走 **S1 登录→S2 同意→S3 建档→首页**全链路（dev 后端起在 `:3000`，前端 `config.js` 已指向）。⚠️ `login.wxml` 含 `wx:if="{{dev}}"`，node--check 验不出，必须真编译。
-- **真机补验**（M1 判据②，凭证到位后补）：M1-001 真微信登录、M1-002 手机号解密——须 Chester 填 `server/.env` 的 `WX_APPSECRET`。
+**前端 M1-005/6/7/9 真编译 + S1→S2→S3 全链路 = QA 全过（2026-07-01，Chester 在 devtools 点验，QA 服务端验真实落库）：**
+- ✅ 微信开发者工具导入 `miniprogram/` **真编译 0 error**，登录页正常渲染（微信登录/授权手机号/开发登录 3 按钮）；`login.wxml` 的 `wx:if="{{dev}}"` 真编译通过。
+- ✅ 走通 **S1 开发登录 → S2 双层同意 → S3 建档 → reLaunch 首页**（dev 后端 `:3000`，前端 `config.js` 指向）。QA 从后端库验真实落库（**非 mock**）：`users` 新增 `dev_…`（dev-login 真入库+JWT）、`gender=male/birth_year=1991/height=175`（age 35→birth_year 真转存）；`consent_records` privacy v1 + health_data v1 **均 active 带版本**；判定「用户数=1/建档完整=1/privacy=1/health_data=1」全绿。
 
-**批量结论**：M1 后端 6 条 + 安全红线 + M0-006 修复 **QA 全过**；前端 4 条静态就绪、**真编译+S1→S2→S3 全链路待 devtools**；M1-002 真解密/M1-001 真登录待真机。**前端真编译过前不 ff 合 main、不打 v0.2.0。**
+**⏳ 真机补验（M1 判据②，Chester 2026-06-29 决定延后，不阻塞里程碑）**：M1-001 真微信登录、M1-002 手机号解密——须 Chester 填 `server/.env` 的 `WX_APPSECRET` 后单验。dev 旁路已覆盖本地全链路。**给 PM：建议登记为 Backlog 追踪，凭证到位即补。**
+
+**批量结论**：M1 后端 6 条 + 安全红线 + M0-006 修复 + 前端 4 条真编译全链路 **QA 全过 → M1 里程碑达成**。已 ff 合并 main + tag `v0.2.0` + 删 `feature/m1`。真机补验延后。
 
 ---
 
