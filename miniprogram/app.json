@@ -6,7 +6,8 @@
     "pages/me/me",
     "pages/login/login",
     "pages/consent/consent",
-    "pages/profile-setup/profile-setup"
+    "pages/profile-setup/profile-setup",
+    "pages/weighing/weighing"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FAFBF2",

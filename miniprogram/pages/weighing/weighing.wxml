@@ -1,0 +1,33 @@
+<view class="screen">
+  <view class="back" bindtap="onBack">‹</view>
+
+  <!-- 态A 蓝牙连接中 -->
+  <view wx:if="{{stage === 'connecting'}}" class="weighing-stage">
+    <view class="pulse"><text class="pulse-kg">kg</text></view>
+    <view class="stage-title">正在连接体脂秤…</view>
+    <view class="muted stage-sub">请光脚上秤，保持站稳（模拟约 2 秒）</view>
+    <button class="btn ghost fail-btn" bindtap="bleFail">模拟蓝牙失败 →</button>
+  </view>
+
+  <!-- 态B 读数成功 -->
+  <view wx:elif="{{stage === 'ok'}}" class="weighing-stage">
+    <view class="muted src">读取成功 · 来源：蓝牙体脂秤</view>
+    <view class="readout">{{weight}}<text class="unit"> kg</text></view>
+    <view class="muted delta">体脂率 {{bodyFatPct}}% · 共读取 14 项身体数据</view>
+    <button class="btn save-btn" bindtap="saveBle" disabled="{{saving}}">保存，查看数据对比 ›</button>
+  </view>
+
+  <!-- 态C 手动兜底 -->
+  <view wx:else class="manual-wrap">
+    <view class="h-title mt40">没连上秤，没关系</view>
+    <view class="h-sub">手动记一下，一样算数 —— 正式版 15 秒超时自动切到这里。</view>
+    <view class="card">
+      <text class="fld">今晨体重（默认带昨日值）</text>
+      <view class="note-in">
+        <input class="input flex1" type="digit" value="{{manualWeight}}" bindinput="onManualInput" />
+        <button class="btn small" bindtap="saveManual" disabled="{{saving}}">保存</button>
+      </view>
+      <view class="muted photo-hint">也可 <text class="linklike" bindtap="savePhoto">拍秤照记录</text>（照片上传后续接入）</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,58 @@
+.pulse-kg {
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--green);
+  letter-spacing: .05em;
+}
+.stage-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.stage-sub {
+  margin-top: 8px;
+}
+.fail-btn {
+  margin-top: 40px;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.src {
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.readout {
+  margin: 14px 0 4px;
+}
+.delta {
+  margin-bottom: 30px;
+}
+.save-btn {
+  width: 70%;
+  margin: 0 auto;
+}
+.manual-wrap {
+  padding-top: 20px;
+}
+.mt40 {
+  margin-top: 40px;
+}
+.fld {
+  display: block;
+  font-size: 13px;
+  color: var(--muted2);
+  margin: 0 0 6px;
+}
+.note-in {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-top: 10px;
+}
+.flex1 {
+  flex: 1;
+}
+.photo-hint {
+  margin-top: 10px;
+  font-size: 12px;
+}
