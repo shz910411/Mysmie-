@@ -1,14 +1,14 @@
 const { request } = require('../../utils/request');
 
-// 14 展示维度（顺序照蓝本 §3.4）。st：仅少数客观参考区间给中性状态标，附免责脚注。
+// 14 展示维度（顺序照蓝本 §3.4）。合规：不做"好/注意"价值判断，仅在指标下展示客观公开参考区间。
 const METRICS = [
   { key: 'weightKg', name: '体重', unit: 'kg', d: 1 },
-  { key: 'healthScore', name: '健康评分', unit: '', d: 0, st: (v) => (v >= 80 ? ['good', '良好'] : ['warn', '关注']) },
-  { key: 'bmi', name: 'BMI', unit: '', d: 1, ref: '参考 18.5–24', st: (v) => (v >= 18.5 && v <= 24 ? ['good', '标准'] : ['warn', '偏离']) },
-  { key: 'bodyFatPct', name: '体脂率', unit: '%', d: 1, ref: '参考区间因人而异' },
+  { key: 'healthScore', name: '健康评分', unit: '', d: 0 },
+  { key: 'bmi', name: 'BMI', unit: '', d: 1 },
+  { key: 'bodyFatPct', name: '体脂率', unit: '%', d: 1 },
   { key: 'fatKg', name: '脂肪', unit: 'kg', d: 1 },
   { key: 'subcutFatPct', name: '皮下脂肪率', unit: '%', d: 1 },
-  { key: 'visceralFatLevel', name: '内脏脂肪等级', unit: '', d: 0, ref: '参考 ≤9', st: (v) => (v <= 9 ? ['good', '正常'] : ['warn', '偏高']) },
+  { key: 'visceralFatLevel', name: '内脏脂肪等级', unit: '', d: 0 },
   { key: 'waterPct', name: '水分', unit: '%', d: 1 },
   { key: 'skeletalMuscleKg', name: '骨骼肌', unit: 'kg', d: 1 },
   { key: 'muscleKg', name: '肌肉量', unit: 'kg', d: 1 },
@@ -41,6 +41,19 @@ function dateLabel(iso) {
   return `${p(d.getMonth() + 1)}-${p(d.getDate())} 晨`;
 }
 
+// 客观公开参考区间（纯陈述、无判断色）。仅覆盖有公认公开标准的指标，其余留空。
+function buildRefs(gender) {
+  const bodyFat =
+    gender === 'male' ? '男性参考 <20%'
+      : gender === 'female' ? '女性参考 <25%'
+        : '女性参考 <25% · 男性 <20%';
+  return {
+    bmi: '参考 18.5–23.9',
+    bodyFatPct: bodyFat,
+    visceralFatLevel: '参考 <10',
+  };
+}
+
 Page({
   data: {
     loading: true,
@@ -65,30 +78,28 @@ Page({
       .then((res) => {
         if (!res || !res.from || !res.to) {
           this.setData({ loading: false, hasCompare: false });
-          return;
+          return null;
         }
-        this.build(res);
+        // 取性别以决定体脂率参考区间；失败则用中性合并区间
+        return request({ url: '/me/profile' })
+          .catch(() => null)
+          .then((profile) => this.build(res, profile && profile.gender));
       })
       .catch(() => this.setData({ loading: false, hasCompare: false }));
   },
 
-  build(res) {
+  build(res, gender) {
     const { from, to, deltas } = res;
-    const rows = METRICS.map((m) => {
-      const tv = to[m.key];
-      const st = m.st && tv != null ? m.st(tv) : null;
-      return {
-        name: m.name,
-        ref: m.ref || '',
-        unit: m.unit,
-        fromVal: fmt(from[m.key], m.d),
-        toVal: fmt(tv, m.d),
-        chg: chgText(deltas[m.key], m.d),
-        chgZero: deltas[m.key] === 0 || deltas[m.key] == null,
-        stClass: st ? st[0] : '',
-        stText: st ? st[1] : '',
-      };
-    });
+    const refs = buildRefs(gender);
+    const rows = METRICS.map((m) => ({
+      name: m.name,
+      ref: refs[m.key] || '',
+      unit: m.unit,
+      fromVal: fmt(from[m.key], m.d),
+      toVal: fmt(to[m.key], m.d),
+      chg: chgText(deltas[m.key], m.d),
+      chgZero: deltas[m.key] === 0 || deltas[m.key] == null,
+    }));
     this.setData({
       loading: false,
       hasCompare: true,

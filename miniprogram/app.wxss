@@ -438,19 +438,6 @@ page {
 .cmp-table .num.today {
   color: var(--ink2);
 }
-.cmp-table .num .st {
-  display: block;
-  font-size: 9px;
-  letter-spacing: .12em;
-  margin-top: 5px;
-  font-family: -apple-system, "PingFang SC", sans-serif;
-}
-.st.good {
-  color: var(--green);
-}
-.st.warn {
-  color: #A8814A;
-}
 .cmp-table .chg {
   font-family: var(--serif);
   font-size: 13.5px;

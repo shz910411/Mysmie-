@@ -35,14 +35,11 @@
             <text wx:if="{{item.ref}}" class="ref">{{item.ref}}</text>
           </view>
           <view class="num">{{item.fromVal}}<text wx:if="{{item.unit}}" class="nu">{{item.unit}}</text></view>
-          <view class="num today">
-            {{item.toVal}}<text wx:if="{{item.unit}}" class="nu">{{item.unit}}</text>
-            <text wx:if="{{item.stText}}" class="st {{item.stClass}}">{{item.stText}}</text>
-          </view>
+          <view class="num today">{{item.toVal}}<text wx:if="{{item.unit}}" class="nu">{{item.unit}}</text></view>
           <view class="chg {{item.chgZero ? 'zero' : ''}}">{{item.chg}}</view>
         </view>
       </view>
-      <view class="muted foot">「标准 / 偏离」等为参考区间比对，仅作个人记录，不构成健康评估。</view>
+      <view class="muted foot">指标下方为公开常用参考区间，仅供个人对照，不构成健康评估。</view>
     </view>
 
     <!-- 值得表扬 -->
